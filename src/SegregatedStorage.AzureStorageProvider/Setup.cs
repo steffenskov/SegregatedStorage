@@ -1,6 +1,5 @@
 using Microsoft.Extensions.DependencyInjection;
 using SegregatedStorage.Providers;
-using SegregatedStorage.Repositories;
 
 namespace SegregatedStorage;
 

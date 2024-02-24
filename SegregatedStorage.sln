@@ -14,6 +14,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SegregatedStorage.AzureStor
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SegregatedStorage.MongoFileRepository", "src\SegregatedStorage.MongoFileRepository\SegregatedStorage.MongoFileRepository.csproj", "{A1A7C097-A942-471A-A63C-A6BD0EC1203F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SegregatedStorage.IntegrationTests", "tests\SegregatedStorage.IntegrationTests\SegregatedStorage.IntegrationTests.csproj", "{47463665-4302-426D-BDCF-A8F6E0BA44AF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -40,6 +42,10 @@ Global
 		{A1A7C097-A942-471A-A63C-A6BD0EC1203F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A1A7C097-A942-471A-A63C-A6BD0EC1203F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A1A7C097-A942-471A-A63C-A6BD0EC1203F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{47463665-4302-426D-BDCF-A8F6E0BA44AF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{47463665-4302-426D-BDCF-A8F6E0BA44AF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{47463665-4302-426D-BDCF-A8F6E0BA44AF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{47463665-4302-426D-BDCF-A8F6E0BA44AF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{336CEC81-752C-4E3E-A343-0F3CCF48884C} = {C13B1F7F-F968-4B4A-9057-AFA81F08825C}
@@ -47,5 +53,6 @@ Global
 		{C75627AE-0BD6-4FDA-B888-762547460685} = {C13B1F7F-F968-4B4A-9057-AFA81F08825C}
 		{230B3E7E-B3FC-4B3A-8CF4-8F669480813E} = {C13B1F7F-F968-4B4A-9057-AFA81F08825C}
 		{A1A7C097-A942-471A-A63C-A6BD0EC1203F} = {C13B1F7F-F968-4B4A-9057-AFA81F08825C}
+		{47463665-4302-426D-BDCF-A8F6E0BA44AF} = {5A602E2C-1936-4FC6-B665-968E88CD4880}
 	EndGlobalSection
 EndGlobal
