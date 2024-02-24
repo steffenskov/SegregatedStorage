@@ -1,0 +1,37 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SegregatedStorage", "src\SegregatedStorage\SegregatedStorage.csproj", "{336CEC81-752C-4E3E-A343-0F3CCF48884C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SegregatedStorage.UnitTests", "tests\SegregatedStorage.UnitTests\SegregatedStorage.UnitTests.csproj", "{48719082-BAB4-4C0D-8F89-82CFFF0E8610}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{C13B1F7F-F968-4B4A-9057-AFA81F08825C}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{5A602E2C-1936-4FC6-B665-968E88CD4880}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SegregatedStorage.Api", "src\SegregatedStorage.Api\SegregatedStorage.Api.csproj", "{C75627AE-0BD6-4FDA-B888-762547460685}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{336CEC81-752C-4E3E-A343-0F3CCF48884C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{336CEC81-752C-4E3E-A343-0F3CCF48884C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{336CEC81-752C-4E3E-A343-0F3CCF48884C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{336CEC81-752C-4E3E-A343-0F3CCF48884C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{48719082-BAB4-4C0D-8F89-82CFFF0E8610}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{48719082-BAB4-4C0D-8F89-82CFFF0E8610}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{48719082-BAB4-4C0D-8F89-82CFFF0E8610}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{48719082-BAB4-4C0D-8F89-82CFFF0E8610}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C75627AE-0BD6-4FDA-B888-762547460685}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C75627AE-0BD6-4FDA-B888-762547460685}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C75627AE-0BD6-4FDA-B888-762547460685}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C75627AE-0BD6-4FDA-B888-762547460685}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{336CEC81-752C-4E3E-A343-0F3CCF48884C} = {C13B1F7F-F968-4B4A-9057-AFA81F08825C}
+		{48719082-BAB4-4C0D-8F89-82CFFF0E8610} = {5A602E2C-1936-4FC6-B665-968E88CD4880}
+		{C75627AE-0BD6-4FDA-B888-762547460685} = {C13B1F7F-F968-4B4A-9057-AFA81F08825C}
+	EndGlobalSection
+EndGlobal
