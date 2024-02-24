@@ -8,13 +8,16 @@ Comes with built-in In-Memory support for ease of testing, as well as packages f
 
 I recommend using the NuGet package: [SegregatedStorage](https://www.nuget.org/packages/SegregatedStorage) however feel free to clone the source instead if that suits your needs better.
 
+For Azure Blob storage support, add this NuGet package: [SegregatedStorage.AzureStorageProvider](https://www.nuget.org/packages/SegregatedStorage.AzureStorageProvider)
+For Mongo File repository support, add this NuGet package: [SegregatedStorage.MongoFileRepository](https://www.nuget.org/packages/SegregatedStorage.MongoFileRepository)
+
 # Usage
 
 First inject the core functionality via Dependency Injection, like this:
 
 ```
 builder.Services.AddInMemoryFileRepository(); // Or AddMongoFileRepository, etc.
-builder.Services.AddInMemoryStorageProvider(); // Or AddAzureBlobStorageProvider, etc.
+builder.Services.AddInMemoryStorageProvider(); // Or AddAzureStorageProvider, etc.
 builder.Services.AddStorageService();
 ```
 

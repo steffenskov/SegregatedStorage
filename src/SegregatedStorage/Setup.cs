@@ -20,7 +20,7 @@ public static class Setup
 	public static IServiceCollection AddInMemoryStorageProvider(this IServiceCollection services)
 	{
 		if (services.Any(service => service.ServiceType == typeof(IStorageProvider)))
-			throw new InvalidOperationException("An IStorageProvider has already been inject into this IServiceCollection");
+			throw new InvalidOperationException("An IStorageProvider has already been injected into this IServiceCollection");
 
 		return services.AddSingleton<IStorageProvider, InMemoryStorageProvider>();
 	}
@@ -28,7 +28,7 @@ public static class Setup
 	public static IServiceCollection AddInMemoryFileRepository(this IServiceCollection services)
 	{
 		if (services.Any(service => service.ServiceType == typeof(IFileRepository)))
-			throw new InvalidOperationException("An IFileRepository has already been inject into this IServiceCollection");
+			throw new InvalidOperationException("An IFileRepository has already been injected into this IServiceCollection");
 
 		return services.AddSingleton<IFileRepository, InMemoryFileRepository>();
 	}
