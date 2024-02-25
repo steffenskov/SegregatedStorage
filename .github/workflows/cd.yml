@@ -6,7 +6,7 @@ on:
 
 env:
   PROJECT_PATH: 'src/SegregatedStorage/SegregatedStorage.csproj'
-  AZURE_PROJECT_PATH: 'src/SegregatedStorage.AzureStorageProvider/SegregatedStorage.AzureStoreProvider.csproj'
+  AZURE_PROJECT_PATH: 'src/SegregatedStorage.AzureStorageProvider/SegregatedStorage.AzureStorageProvider.csproj'
   MONGO_PROJECT_PATH: 'src/SegregatedStorage.MongoFileRepository/SegregatedStorage.MongoFileRepository.csproj'
   SOLUTION_PATH: 'SegregatedStorage.sln'
   PACKAGE_OUTPUT_DIRECTORY: ${{ github.workspace }}/output
