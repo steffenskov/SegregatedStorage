@@ -40,15 +40,20 @@ internal class DeletionBackgroundService<TKey> : IHostedService
 
 		while (!cancellationToken.IsCancellationRequested)
 		{
-			foreach (var (key, repository) in _repositoryLocator.GetServices())
-			{
-				var files = await repository.GetForDeletionAsync(cancellationToken);
-
-				foreach (var file in files)
-					await DeleteFileAsync(key, repository, file, cancellationToken);
-			}
+			await DeleteFromRepositoriesAsync(cancellationToken);
 
 			await Task.Delay(TimeSpan.FromMinutes(1), cancellationToken);
+		}
+	}
+
+	protected async Task DeleteFromRepositoriesAsync(CancellationToken cancellationToken)
+	{
+		foreach (var (key, repository) in _repositoryLocator.GetServices())
+		{
+			var files = await repository.GetForDeletionAsync(cancellationToken);
+
+			foreach (var file in files)
+				await DeleteFileAsync(key, repository, file, cancellationToken);
 		}
 	}
 
@@ -64,7 +69,7 @@ internal class DeletionBackgroundService<TKey> : IHostedService
 		var storageProvider = _storageProviderLocator.GetService(key);
 		try
 		{
-			await storageProvider.DeleteAsync(FilePathGenerator.CreateFilePath(file.Id), cancellationToken);
+			await storageProvider.DeleteAsync(FilePathGenerator.GenerateFilePath(file.Id), cancellationToken);
 			return true;
 		}
 		catch (FileNotFoundException)

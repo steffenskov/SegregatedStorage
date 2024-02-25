@@ -8,6 +8,9 @@ internal class InMemoryStorageProvider : IStorageProvider
 
 	public async ValueTask UploadAsync(string filePath, Stream data, CancellationToken cancellationToken = default)
 	{
+		if (_files.TryGetValue(filePath, out _))
+			throw new ArgumentException($"File already exists at path {filePath}", nameof(filePath));
+
 		using var ms = new MemoryStream();
 		await data.CopyToAsync(ms, cancellationToken);
 		ms.Seek(0, SeekOrigin.Begin);

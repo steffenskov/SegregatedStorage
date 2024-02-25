@@ -12,7 +12,7 @@ internal class StorageService<TKey> : IStorageService<TKey>
 		_repositoryLocator = repositoryLocator;
 	}
 
-	public async ValueTask<Guid?> UploadAsync(TKey key, string filename, string mimeType, Stream data, CancellationToken cancellationToken = default)
+	public async ValueTask<Guid> UploadAsync(TKey key, string filename, string mimeType, Stream data, CancellationToken cancellationToken = default)
 	{
 		var repository = _repositoryLocator.GetService(key);
 		var storageProvider = _storageProviderLocator.GetService(key);
@@ -21,7 +21,7 @@ internal class StorageService<TKey> : IStorageService<TKey>
 
 		try
 		{
-			await storageProvider.UploadAsync(FilePathGenerator.CreateFilePath(file.Id), data, cancellationToken);
+			await storageProvider.UploadAsync(FilePathGenerator.GenerateFilePath(file.Id), data, cancellationToken);
 			file = file.Uploaded();
 			await repository.PersistAsync(file, CancellationToken.None);
 			return file.Id;
@@ -29,7 +29,7 @@ internal class StorageService<TKey> : IStorageService<TKey>
 		catch (OperationCanceledException)
 		{
 			await repository.DeleteAsync(file.Id, CancellationToken.None);
-			return null;
+			throw;
 		}
 	}
 
@@ -45,7 +45,7 @@ internal class StorageService<TKey> : IStorageService<TKey>
 		if (file.State == FileState.AwaitingUpload)
 			throw new InvalidOperationException($"File with id {id} has not uploaded its data yet");
 
-		var stream = await storageProvider.DownloadAsync(FilePathGenerator.CreateFilePath(id), cancellationToken);
+		var stream = await storageProvider.DownloadAsync(FilePathGenerator.GenerateFilePath(id), cancellationToken);
 
 		return (file, stream);
 	}
