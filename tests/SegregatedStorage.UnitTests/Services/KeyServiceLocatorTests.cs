@@ -24,7 +24,7 @@ public class KeyServiceLocatorTests
 	public void GetService_Exists_ReturnsSameInstance()
 	{
 		// Arrange
-		var locator = new KeyServiceLocator<int, Service>(val => new Service(val));
+		var locator = new KeyServiceLocator<int, Service>(val => new Service());
 
 		// Act
 		var firstService = locator.GetService(42);
@@ -38,7 +38,7 @@ public class KeyServiceLocatorTests
 	public void GetServices_NoneCreated_ReturnsEmptyCollection()
 	{
 		// Arrange
-		var locator = new KeyServiceLocator<int, Service>(val => new Service(val));
+		var locator = new KeyServiceLocator<int, Service>(val => new Service());
 
 		// Act
 		var services = locator.GetServices();
@@ -51,7 +51,7 @@ public class KeyServiceLocatorTests
 	public void GetServices_SomeCreated_ReturnsThose()
 	{
 		// Arrange
-		var locator = new KeyServiceLocator<int, Service>(val => new Service(val));
+		var locator = new KeyServiceLocator<int, Service>(val => new Service());
 		var service1 = locator.GetService(42);
 		var service2 = locator.GetService(1337);
 
@@ -64,4 +64,4 @@ public class KeyServiceLocatorTests
 	}
 }
 
-file class Service(int Value);
+file class Service();
