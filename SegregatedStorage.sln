@@ -1,0 +1,58 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SegregatedStorage", "src\SegregatedStorage\SegregatedStorage.csproj", "{336CEC81-752C-4E3E-A343-0F3CCF48884C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SegregatedStorage.UnitTests", "tests\SegregatedStorage.UnitTests\SegregatedStorage.UnitTests.csproj", "{48719082-BAB4-4C0D-8F89-82CFFF0E8610}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{C13B1F7F-F968-4B4A-9057-AFA81F08825C}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{5A602E2C-1936-4FC6-B665-968E88CD4880}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SegregatedStorage.AzureStorageProvider", "src\SegregatedStorage.AzureStorageProvider\SegregatedStorage.AzureStorageProvider.csproj", "{230B3E7E-B3FC-4B3A-8CF4-8F669480813E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SegregatedStorage.MongoFileRepository", "src\SegregatedStorage.MongoFileRepository\SegregatedStorage.MongoFileRepository.csproj", "{A1A7C097-A942-471A-A63C-A6BD0EC1203F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SegregatedStorage.IntegrationTests", "tests\SegregatedStorage.IntegrationTests\SegregatedStorage.IntegrationTests.csproj", "{47463665-4302-426D-BDCF-A8F6E0BA44AF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SegregatedStorage.Api", "src\SegregatedStorage.Api\SegregatedStorage.Api.csproj", "{156BE34E-11C9-4C40-B2A7-DE254375F99B}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{336CEC81-752C-4E3E-A343-0F3CCF48884C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{336CEC81-752C-4E3E-A343-0F3CCF48884C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{336CEC81-752C-4E3E-A343-0F3CCF48884C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{336CEC81-752C-4E3E-A343-0F3CCF48884C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{48719082-BAB4-4C0D-8F89-82CFFF0E8610}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{48719082-BAB4-4C0D-8F89-82CFFF0E8610}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{48719082-BAB4-4C0D-8F89-82CFFF0E8610}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{48719082-BAB4-4C0D-8F89-82CFFF0E8610}.Release|Any CPU.Build.0 = Release|Any CPU
+		{230B3E7E-B3FC-4B3A-8CF4-8F669480813E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{230B3E7E-B3FC-4B3A-8CF4-8F669480813E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{230B3E7E-B3FC-4B3A-8CF4-8F669480813E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{230B3E7E-B3FC-4B3A-8CF4-8F669480813E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A1A7C097-A942-471A-A63C-A6BD0EC1203F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A1A7C097-A942-471A-A63C-A6BD0EC1203F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A1A7C097-A942-471A-A63C-A6BD0EC1203F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A1A7C097-A942-471A-A63C-A6BD0EC1203F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{47463665-4302-426D-BDCF-A8F6E0BA44AF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{47463665-4302-426D-BDCF-A8F6E0BA44AF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{47463665-4302-426D-BDCF-A8F6E0BA44AF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{47463665-4302-426D-BDCF-A8F6E0BA44AF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{156BE34E-11C9-4C40-B2A7-DE254375F99B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{156BE34E-11C9-4C40-B2A7-DE254375F99B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{156BE34E-11C9-4C40-B2A7-DE254375F99B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{156BE34E-11C9-4C40-B2A7-DE254375F99B}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{336CEC81-752C-4E3E-A343-0F3CCF48884C} = {C13B1F7F-F968-4B4A-9057-AFA81F08825C}
+		{48719082-BAB4-4C0D-8F89-82CFFF0E8610} = {5A602E2C-1936-4FC6-B665-968E88CD4880}
+		{230B3E7E-B3FC-4B3A-8CF4-8F669480813E} = {C13B1F7F-F968-4B4A-9057-AFA81F08825C}
+		{A1A7C097-A942-471A-A63C-A6BD0EC1203F} = {C13B1F7F-F968-4B4A-9057-AFA81F08825C}
+		{47463665-4302-426D-BDCF-A8F6E0BA44AF} = {5A602E2C-1936-4FC6-B665-968E88CD4880}
+		{156BE34E-11C9-4C40-B2A7-DE254375F99B} = {C13B1F7F-F968-4B4A-9057-AFA81F08825C}
+	EndGlobalSection
+EndGlobal
