@@ -53,19 +53,19 @@ jobs:
 
     - name: 'Get main version'
       id: version
-      uses: bbonkr/get-version-action@v1.2.0
+      uses: bbonkr/get-version-action@v1.2.1
       with:
         project: ${{ env.PROJECT_PATH }}
 
     - name: 'Get Azure version'
       id: azure_version
-      uses: bbonkr/get-version-action@v1.2.0
+      uses: bbonkr/get-version-action@v1.2.1
       with:
         project: ${{ env.AZURE_PROJECT_PATH }}
 
     - name: 'Get Mongo version'
       id: mongo_version
-      uses: bbonkr/get-version-action@v1.2.0
+      uses: bbonkr/get-version-action@v1.2.1
       with:
         project: ${{ env.MONGO_PROJECT_PATH }}
 
