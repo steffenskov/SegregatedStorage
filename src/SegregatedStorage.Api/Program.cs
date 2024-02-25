@@ -6,13 +6,13 @@ var builder = WebApplication.CreateBuilder(args);
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.Services.AddInMemoryFileRepository();
-builder.Services.AddInMemoryStorageProvider();
-builder.Services.AddStorageService();
+builder.Services.AddInMemoryFileRepository<int>();
+builder.Services.AddInMemoryStorageProvider<int>();
+builder.Services.AddStorageService<int>();
 
 var app = builder.Build();
 
-app.MapStorageApi(config => { config.DisableAntiForgery = true; });
+app.MapStorageApi<int>(config => { config.DisableAntiForgery = true; });
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

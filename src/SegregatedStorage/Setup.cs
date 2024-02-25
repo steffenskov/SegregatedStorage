@@ -8,41 +8,46 @@ namespace SegregatedStorage;
 
 public static class Setup
 {
-	public static IServiceCollection AddStorageService(this IServiceCollection services)
+	public static IServiceCollection AddStorageService<TKey>(this IServiceCollection services)
+		where TKey : notnull
 	{
-		if (services.Any(service => service.ServiceType == typeof(IStorageService)))
-			throw new InvalidOperationException("AddStorageService has already been called once on this IServiceCollection");
+		services.ThrowIfRegistered<IStorageService<TKey>>();
 
-		services.AddHostedService<DeletionBackgroundService>();
-		return services.AddSingleton<IStorageService, StorageService>();
+		services.AddHostedService<DeletionBackgroundService<TKey>>();
+		return services.AddSingleton<IStorageService<TKey>, StorageService<TKey>>();
 	}
 
-	public static IServiceCollection AddInMemoryStorageProvider(this IServiceCollection services)
+	public static IServiceCollection AddInMemoryStorageProvider<TKey>(this IServiceCollection services)
+		where TKey : notnull
 	{
-		if (services.Any(service => service.ServiceType == typeof(IStorageProvider)))
-			throw new InvalidOperationException("An IStorageProvider has already been injected into this IServiceCollection");
-
-		return services.AddSingleton<IStorageProvider, InMemoryStorageProvider>();
+		return services.AddKeyServiceLocator<TKey, IStorageProvider>(_ => new InMemoryStorageProvider());
 	}
 
-	public static IServiceCollection AddInMemoryFileRepository(this IServiceCollection services)
+	public static IServiceCollection AddInMemoryFileRepository<TKey>(this IServiceCollection services)
+		where TKey : notnull
 	{
-		if (services.Any(service => service.ServiceType == typeof(IFileRepository)))
-			throw new InvalidOperationException("An IFileRepository has already been injected into this IServiceCollection");
-
-		return services.AddSingleton<IFileRepository, InMemoryFileRepository>();
+		return services.AddKeyServiceLocator<TKey, IFileRepository>(_ => new InMemoryFileRepository());
 	}
 
-	public static void MapStorageApi(this IEndpointRouteBuilder app, Action<ApiConfiguration>? configureApi = null)
+	public static IServiceCollection AddKeyServiceLocator<TKey, TService>(this IServiceCollection services, Func<TKey, TService> factoryMethod)
+		where TKey : notnull
+	{
+		services.ThrowIfKeyServiceLocatorRegistered<TKey, TService>();
+
+		return services.AddSingleton<IKeyServiceLocator<TKey, TService>>(new KeyServiceLocator<TKey, TService>(factoryMethod));
+	}
+
+	public static void MapStorageApi<TKey>(this IEndpointRouteBuilder app, Action<ApiConfiguration>? configureApi = null)
+		where TKey : notnull
 	{
 		var configuration = new ApiConfiguration();
 		configureApi?.Invoke(configuration);
 
-		app.MapGet("/file/{id:guid}", async (IStorageService service, Guid id, CancellationToken cancellationToken) =>
+		app.MapGet("/file/{key}/{id:guid}", async (IStorageService<TKey> service, TKey key, Guid id, CancellationToken cancellationToken) =>
 			{
 				try
 				{
-					var (file, data) = await service.DownloadAsync(id, cancellationToken);
+					var (file, data) = await service.DownloadAsync(key, id, cancellationToken);
 					return Results.Stream(data, file.MimeType, file.FileName);
 				}
 				catch (FileNotFoundException)
@@ -53,10 +58,10 @@ public static class Setup
 			.Produces(StatusCodes.Status200OK)
 			.Produces(StatusCodes.Status404NotFound);
 
-		var uploadMethod = app.MapPost("/file", async (IStorageService service, IFormFile file, CancellationToken cancellationToken) =>
+		var uploadMethod = app.MapPost("/file/{key}", async (IStorageService<TKey> service, TKey key, IFormFile file, CancellationToken cancellationToken) =>
 		{
 			await using var stream = file.OpenReadStream();
-			var result = await service.UploadAsync(file.FileName, file.ContentType, stream, cancellationToken);
+			var result = await service.UploadAsync(key, file.FileName, file.ContentType, stream, cancellationToken);
 
 			return Results.Created((string?)null, new { Id = result });
 		}).Produces(StatusCodes.Status201Created);
@@ -64,11 +69,11 @@ public static class Setup
 		if (configuration.DisableAntiForgery)
 			uploadMethod.DisableAntiforgery();
 
-		app.MapDelete("/file/{id:guid}", async (IStorageService service, Guid id, CancellationToken cancellationToken) =>
+		app.MapDelete("/file/{key}/{id:guid}", async (IStorageService<TKey> service, TKey key, Guid id, CancellationToken cancellationToken) =>
 			{
 				try
 				{
-					await service.DeleteAsync(id, cancellationToken);
+					await service.DeleteAsync(key, id, cancellationToken);
 				}
 				catch (FileNotFoundException)
 				{

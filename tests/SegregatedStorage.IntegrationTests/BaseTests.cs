@@ -8,9 +8,9 @@ public abstract class BaseTests
 	protected BaseTests(ContainerFixture fixture)
 	{
 		var services = new ServiceCollection();
-		services.AddMongoFileRepository(fixture.MongoConnectionString, "test-db", "files");
-		services.AddAzureStorageProvider();
-		services.AddStorageService();
+		services.AddMongoFileRepository<int>(fixture.MongoConnectionString, "test-db", customerId => $"files-{customerId}");
+		//services.AddAzureStorageProvider<int>();
+		services.AddStorageService<int>();
 		Provider = services.BuildServiceProvider();
 	}
 

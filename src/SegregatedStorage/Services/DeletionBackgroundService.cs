@@ -2,17 +2,18 @@ using Microsoft.Extensions.Hosting;
 
 namespace SegregatedStorage.Services;
 
-internal class DeletionBackgroundService : IHostedService
+internal class DeletionBackgroundService<TKey> : IHostedService
+	where TKey : notnull
 {
-	private readonly IFileRepository _repository;
-	private readonly IStorageProvider _storageProvider;
+	private readonly IKeyServiceLocator<TKey, IFileRepository> _repositoryLocator;
+	private readonly IKeyServiceLocator<TKey, IStorageProvider> _storageProviderLocator;
 	private CancellationTokenSource? _cancellationTokenSource;
 	private Task? _deletionLoop;
 
-	public DeletionBackgroundService(IFileRepository repository, IStorageProvider storageProvider)
+	public DeletionBackgroundService(IKeyServiceLocator<TKey, IFileRepository> repositoryLocator, IKeyServiceLocator<TKey, IStorageProvider> storageProviderLocator)
 	{
-		_repository = repository;
-		_storageProvider = storageProvider;
+		_repositoryLocator = repositoryLocator;
+		_storageProviderLocator = storageProviderLocator;
 	}
 
 	public Task StartAsync(CancellationToken cancellationToken)
@@ -39,27 +40,31 @@ internal class DeletionBackgroundService : IHostedService
 
 		while (!cancellationToken.IsCancellationRequested)
 		{
-			var files = await _repository.GetForDeletionAsync(cancellationToken);
+			foreach (var (key, repository) in _repositoryLocator.GetServices())
+			{
+				var files = await repository.GetForDeletionAsync(cancellationToken);
 
-			foreach (var file in files)
-				await DeleteFileAsync(file, cancellationToken);
+				foreach (var file in files)
+					await DeleteFileAsync(key, repository, file, cancellationToken);
+			}
 
 			await Task.Delay(TimeSpan.FromMinutes(1), cancellationToken);
 		}
 	}
 
-	private async Task DeleteFileAsync(FileAggregate file, CancellationToken cancellationToken)
+	private async Task DeleteFileAsync(TKey key, IFileRepository repository, FileAggregate file, CancellationToken cancellationToken)
 	{
-		var deleted = await DeleteFromStorageProviderAsync(file, cancellationToken);
+		var deleted = await DeleteFromStorageProviderAsync(key, file, cancellationToken);
 
-		if (deleted) await _repository.DeleteAsync(file.Id, cancellationToken);
+		if (deleted) await repository.DeleteAsync(file.Id, cancellationToken);
 	}
 
-	private async Task<bool> DeleteFromStorageProviderAsync(FileAggregate file, CancellationToken cancellationToken)
+	private async Task<bool> DeleteFromStorageProviderAsync(TKey key, FileAggregate file, CancellationToken cancellationToken)
 	{
+		var storageProvider = _storageProviderLocator.GetService(key);
 		try
 		{
-			await _storageProvider.DeleteAsync(FilePathGenerator.CreateFilePath(file.Id), cancellationToken);
+			await storageProvider.DeleteAsync(FilePathGenerator.CreateFilePath(file.Id), cancellationToken);
 			return true;
 		}
 		catch (FileNotFoundException)

@@ -1,38 +1,43 @@
 namespace SegregatedStorage.Services;
 
-internal class StorageService : IStorageService
+internal class StorageService<TKey> : IStorageService<TKey>
+	where TKey : notnull
 {
-	private readonly IFileRepository _repository;
-	private readonly IStorageProvider _storageProvider;
+	private readonly IKeyServiceLocator<TKey, IFileRepository> _repositoryLocator;
+	private readonly IKeyServiceLocator<TKey, IStorageProvider> _storageProviderLocator;
 
-	public StorageService(IStorageProvider storageProvider, IFileRepository repository)
+	public StorageService(IKeyServiceLocator<TKey, IFileRepository> repositoryLocator, IKeyServiceLocator<TKey, IStorageProvider> storageProviderLocator)
 	{
-		_storageProvider = storageProvider;
-		_repository = repository;
+		_storageProviderLocator = storageProviderLocator;
+		_repositoryLocator = repositoryLocator;
 	}
 
-	public async ValueTask<Guid?> UploadAsync(string filename, string mimeType, Stream data, CancellationToken cancellationToken = default)
+	public async ValueTask<Guid?> UploadAsync(TKey key, string filename, string mimeType, Stream data, CancellationToken cancellationToken = default)
 	{
+		var repository = _repositoryLocator.GetService(key);
+		var storageProvider = _storageProviderLocator.GetService(key);
 		var file = FileAggregate.Create(filename, mimeType);
-		await _repository.PersistAsync(file, cancellationToken);
+		await repository.PersistAsync(file, cancellationToken);
 
 		try
 		{
-			await _storageProvider.UploadAsync(FilePathGenerator.CreateFilePath(file.Id), data, cancellationToken);
+			await storageProvider.UploadAsync(FilePathGenerator.CreateFilePath(file.Id), data, cancellationToken);
 			file = file.Uploaded();
-			await _repository.PersistAsync(file, CancellationToken.None);
+			await repository.PersistAsync(file, CancellationToken.None);
 			return file.Id;
 		}
 		catch (OperationCanceledException)
 		{
-			await _repository.DeleteAsync(file.Id, CancellationToken.None);
+			await repository.DeleteAsync(file.Id, CancellationToken.None);
 			return null;
 		}
 	}
 
-	public async ValueTask<(FileAggregate File, Stream Data)> DownloadAsync(Guid id, CancellationToken cancellationToken = default)
+	public async ValueTask<(FileAggregate File, Stream Data)> DownloadAsync(TKey key, Guid id, CancellationToken cancellationToken = default)
 	{
-		var file = await _repository.GetAsync(id, cancellationToken);
+		var repository = _repositoryLocator.GetService(key);
+		var storageProvider = _storageProviderLocator.GetService(key);
+		var file = await repository.GetAsync(id, cancellationToken);
 
 		if (file is null || file.State == FileState.Deleting)
 			throw new FileNotFoundException($"File not found with id {id}");
@@ -40,18 +45,19 @@ internal class StorageService : IStorageService
 		if (file.State == FileState.AwaitingUpload)
 			throw new InvalidOperationException($"File with id {id} has not uploaded its data yet");
 
-		var stream = await _storageProvider.DownloadAsync(FilePathGenerator.CreateFilePath(id), cancellationToken);
+		var stream = await storageProvider.DownloadAsync(FilePathGenerator.CreateFilePath(id), cancellationToken);
 
 		return (file, stream);
 	}
 
-	public async ValueTask DeleteAsync(Guid id, CancellationToken cancellationToken = default)
+	public async ValueTask DeleteAsync(TKey key, Guid id, CancellationToken cancellationToken = default)
 	{
-		var file = await _repository.GetAsync(id, cancellationToken);
+		var repository = _repositoryLocator.GetService(key);
+		var file = await repository.GetAsync(id, cancellationToken);
 		if (file is null || file.State == FileState.Deleting)
 			throw new FileNotFoundException($"File not found with id {id}");
 
 		var deletedFile = file.Delete();
-		await _repository.PersistAsync(deletedFile, cancellationToken);
+		await repository.PersistAsync(deletedFile, cancellationToken);
 	}
 }

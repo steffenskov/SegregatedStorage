@@ -6,14 +6,18 @@ namespace SegregatedStorage;
 
 public static class Setup
 {
-	public static IServiceCollection AddMongoFileRepository(this IServiceCollection services, string connectionString, string databaseName, string collectionName)
+	public static IServiceCollection AddMongoFileRepository<TKey>(this IServiceCollection services, string connectionString, string collectionName,
+		Func<TKey, string> databaseNameFactory)
+		where TKey : notnull
 	{
-		if (services.Any(service => service.ServiceType == typeof(IFileRepository)))
-			throw new InvalidOperationException("An IFileRepository has already been injected into this IServiceCollection");
-
 		var mongoClient = new MongoClient(connectionString);
-		var db = mongoClient.GetDatabase(databaseName);
 
-		return services.AddSingleton<IFileRepository>(new MongoFileRepository(db, collectionName));
+		return services.AddKeyServiceLocator<TKey, IFileRepository>(key =>
+		{
+			var dbName = databaseNameFactory(key);
+			var db = mongoClient.GetDatabase(dbName);
+
+			return new MongoFileRepository(db, collectionName);
+		});
 	}
 }
