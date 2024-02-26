@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.Hosting;
 
 namespace SegregatedStorage.UnitTests;
 
@@ -43,11 +44,34 @@ public class SetupTests
 		// Assert
 		var provider = services.BuildServiceProvider();
 		var service = provider.GetService<IStorageService<int>>();
+		var deletionService = provider.GetServices<IHostedService>().OfType<DeletionBackgroundService<int>>().SingleOrDefault();
 
 		Assert.NotNull(service);
+		Assert.NotNull(deletionService);
 		Assert.IsType<StorageService<int>>(service);
 	}
 
+	[Fact]
+	public void AddStorageService_IncludeDeletionBackgroundServiceFalse_RegistersOnlyStorageService()
+	{
+		// Arrange
+		var services = new ServiceCollection();
+		services.AddInMemoryFileRepository<int>();
+		services.AddInMemoryStorageProvider<int>();
+
+		// Act
+		services.AddStorageService<int>(config => config.IncludeDeletionBackgroundService = false);
+
+		// Assert
+		var provider = services.BuildServiceProvider();
+		var service = provider.GetService<IStorageService<int>>();
+		var deletionService = provider.GetServices<IHostedService>().OfType<DeletionBackgroundService<int>>().SingleOrDefault();
+
+		Assert.NotNull(service);
+		Assert.IsType<StorageService<int>>(service);
+		Assert.Null(deletionService);
+	}
+	
 	[Fact]
 	public void AddInMemoryStorageProvider_NotRegistered_Registers()
 	{
