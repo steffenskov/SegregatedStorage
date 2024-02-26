@@ -12,7 +12,11 @@ builder.Services.AddStorageService<int>();
 
 var app = builder.Build();
 
-app.MapStorageApi<int>(config => { config.DisableAntiForgery = true; });
+app.MapStorageApi<int>(config =>
+{
+	config.DisableAntiForgery = true;
+	config.EndpointPrefix = "storage";
+});
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

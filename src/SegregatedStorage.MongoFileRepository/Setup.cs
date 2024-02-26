@@ -20,4 +20,16 @@ public static class Setup
 			return new MongoFileRepository(db, collectionName);
 		});
 	}
+
+	public static IServiceCollection AddMongoFileRepository<TKey>(this IServiceCollection services, string collectionName,
+		Func<TKey, IMongoDatabase> databaseFactory)
+		where TKey : notnull
+	{
+		return services.AddKeyServiceLocator<TKey, IFileRepository>(key =>
+		{
+			var db = databaseFactory(key);
+
+			return new MongoFileRepository(db, collectionName);
+		});
+	}
 }

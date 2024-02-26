@@ -8,12 +8,16 @@ namespace SegregatedStorage;
 
 public static class Setup
 {
-	public static IServiceCollection AddStorageService<TKey>(this IServiceCollection services)
+	public static IServiceCollection AddStorageService<TKey>(this IServiceCollection services, Action<StorageServiceConfiguration>? configureService = null)
 		where TKey : notnull
 	{
 		services.ThrowIfRegistered<IStorageService<TKey>>();
 
-		services.AddHostedService<DeletionBackgroundService<TKey>>();
+		var configuration = new StorageServiceConfiguration();
+		configureService?.Invoke(configuration);
+		
+		if (configuration.IncludeDeletionBackgroundService)
+			services.AddHostedService<DeletionBackgroundService<TKey>>();
 		return services.AddSingleton<IStorageService<TKey>, StorageService<TKey>>();
 	}
 
@@ -43,7 +47,7 @@ public static class Setup
 		var configuration = new ApiConfiguration();
 		configureApi?.Invoke(configuration);
 
-		app.MapGet("/file/{key}/{id:guid}", async (IStorageService<TKey> service, TKey key, Guid id, CancellationToken cancellationToken) =>
+		app.MapGet($"/{configuration.EndpointPrefix}/{{key}}/{{id:guid}}", async (IStorageService<TKey> service, TKey key, Guid id, CancellationToken cancellationToken) =>
 			{
 				try
 				{
@@ -58,18 +62,19 @@ public static class Setup
 			.Produces(StatusCodes.Status200OK)
 			.Produces(StatusCodes.Status404NotFound);
 
-		var uploadMethod = app.MapPost("/file/{key}", async (IStorageService<TKey> service, TKey key, IFormFile file, CancellationToken cancellationToken) =>
-		{
-			await using var stream = file.OpenReadStream();
-			var result = await service.UploadAsync(key, file.FileName, file.ContentType, stream, cancellationToken);
+		var uploadMethod = app.MapPost($"/{configuration.EndpointPrefix}/{{key}}",
+			async (IStorageService<TKey> service, TKey key, IFormFile file, CancellationToken cancellationToken) =>
+			{
+				await using var stream = file.OpenReadStream();
+				var result = await service.UploadAsync(key, file.FileName, file.ContentType, stream, cancellationToken);
 
-			return Results.Created((string?)null, new { Id = result });
-		}).Produces(StatusCodes.Status201Created);
+				return Results.Created((string?)null, new { Id = result });
+			}).Produces(StatusCodes.Status201Created);
 
 		if (configuration.DisableAntiForgery)
 			uploadMethod.DisableAntiforgery();
 
-		app.MapDelete("/file/{key}/{id:guid}", async (IStorageService<TKey> service, TKey key, Guid id, CancellationToken cancellationToken) =>
+		app.MapDelete($"/{configuration.EndpointPrefix}/{{key}}/{{id:guid}}", async (IStorageService<TKey> service, TKey key, Guid id, CancellationToken cancellationToken) =>
 			{
 				try
 				{
