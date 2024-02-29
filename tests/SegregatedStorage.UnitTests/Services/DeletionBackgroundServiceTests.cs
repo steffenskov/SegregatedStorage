@@ -50,7 +50,7 @@ public class DeletionBackgroundServiceTests
 		// Arrange
 		const int key1 = 42;
 		const int key2 = 1337;
-		var file = FileAggregate.Create("hello world", "plain/text");
+		var file = FileAggregate.Create(Guid.NewGuid(), "hello world", "plain/text");
 		var storageProviderDeleteCalled = new Dictionary<int, bool>();
 		var repositoryDeleteCalled = new Dictionary<int, bool>();
 

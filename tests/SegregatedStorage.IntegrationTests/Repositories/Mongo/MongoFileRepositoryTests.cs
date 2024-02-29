@@ -15,7 +15,7 @@ public class MongoFileRepositoryTests : BaseTests
 	{
 		// Arrange
 		var repository = _repositoryLocator.GetService(42);
-		var file = FileAggregate.Create("image.jpg", "image/jpg");
+		var file = FileAggregate.Create(Guid.NewGuid(), "image.jpg", "image/jpg");
 
 		// Act
 		await repository.PersistAsync(file);
@@ -31,7 +31,7 @@ public class MongoFileRepositoryTests : BaseTests
 	{
 		// Arrange
 		var repository = _repositoryLocator.GetService(42);
-		var file = FileAggregate.Create("image.jpg", "image/jpg");
+		var file = FileAggregate.Create(Guid.NewGuid(), "image.jpg", "image/jpg");
 		await repository.PersistAsync(file);
 
 		var updatedFile = file.Uploaded();
@@ -61,7 +61,7 @@ public class MongoFileRepositoryTests : BaseTests
 		// Arrange
 		var repository = _repositoryLocator.GetService(42);
 		var otherRepository = _repositoryLocator.GetService(43);
-		var file = FileAggregate.Create("image.jpg", "image/jpg");
+		var file = FileAggregate.Create(Guid.NewGuid(), "image.jpg", "image/jpg");
 		await repository.PersistAsync(file);
 
 		// Act && Assert
@@ -73,7 +73,7 @@ public class MongoFileRepositoryTests : BaseTests
 	{
 		// Arrange
 		var repository = _repositoryLocator.GetService(42);
-		var file = FileAggregate.Create("image.jpg", "image/jpg");
+		var file = FileAggregate.Create(Guid.NewGuid(), "image.jpg", "image/jpg");
 		await repository.PersistAsync(file);
 
 		// Act
@@ -88,7 +88,7 @@ public class MongoFileRepositoryTests : BaseTests
 	{
 		// Arrange
 		var repository = _repositoryLocator.GetService(42);
-		var file = FileAggregate.Create("image.jpg", "image/jpg");
+		var file = FileAggregate.Create(Guid.NewGuid(), "image.jpg", "image/jpg");
 		await repository.PersistAsync(file);
 
 		// Act
@@ -127,9 +127,9 @@ public class MongoFileRepositoryTests : BaseTests
 	{
 		// Arrange
 		var repository = _repositoryLocator.GetService(42);
-		var file1 = FileAggregate.Create("image.jpg", "image/jpg");
-		var file2 = FileAggregate.Create("image.jpg", "image/jpg").Delete();
-		var file3 = FileAggregate.Create("image.jpg", "image/jpg").Delete();
+		var file1 = FileAggregate.Create(Guid.NewGuid(), "image.jpg", "image/jpg");
+		var file2 = FileAggregate.Create(Guid.NewGuid(), "image.jpg", "image/jpg").Delete();
+		var file3 = FileAggregate.Create(Guid.NewGuid(), "image.jpg", "image/jpg").Delete();
 		await repository.PersistAsync(file1);
 		await repository.PersistAsync(file2);
 		await repository.PersistAsync(file3);

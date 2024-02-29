@@ -15,6 +15,18 @@ public interface IStorageService<in TKey>
 	ValueTask<Guid> UploadAsync(TKey key, string filename, string mimeType, Stream data, CancellationToken cancellationToken = default);
 
 	/// <summary>
+	///     Uploads a file to the storage service using the given id.
+	/// </summary>
+	/// <param name="key">Key used for data segregation</param>
+	/// <param name="id">Id of the file</param>
+	/// <param name="filename">Pretty name of the file, will be used when downloading the file.</param>
+	/// <param name="mimeType">MimeType of the file, will be used when downloading the file.</param>
+	/// <param name="data">The actual data contents of the file.</param>
+	/// <param name="cancellationToken">CancellationToken, can be omitted</param>
+	/// <returns>Id of the file uploaded.</returns>
+	ValueTask UploadAsync(TKey key, Guid id, string filename, string mimeType, Stream data, CancellationToken cancellationToken = default);
+
+	/// <summary>
 	///     Downloads a file from the storage service.
 	/// </summary>
 	/// <param name="key">Key used for data segregation</param>

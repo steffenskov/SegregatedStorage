@@ -14,9 +14,16 @@ internal class StorageService<TKey> : IStorageService<TKey>
 
 	public async ValueTask<Guid> UploadAsync(TKey key, string filename, string mimeType, Stream data, CancellationToken cancellationToken = default)
 	{
+		var id = Guid.NewGuid();
+		await UploadAsync(key, id, filename, mimeType, data, cancellationToken);
+		return id;
+	}
+
+	public async ValueTask UploadAsync(TKey key, Guid id, string filename, string mimeType, Stream data, CancellationToken cancellationToken = default)
+	{
 		var repository = _repositoryLocator.GetService(key);
 		var storageProvider = _storageProviderLocator.GetService(key);
-		var file = FileAggregate.Create(filename, mimeType);
+		var file = FileAggregate.Create(id, filename, mimeType);
 		await repository.PersistAsync(file, cancellationToken);
 
 		try
@@ -24,7 +31,6 @@ internal class StorageService<TKey> : IStorageService<TKey>
 			await storageProvider.UploadAsync(FilePathGenerator.GenerateFilePath(file.Id), data, cancellationToken);
 			file = file.Uploaded();
 			await repository.PersistAsync(file, CancellationToken.None);
-			return file.Id;
 		}
 		catch (OperationCanceledException)
 		{

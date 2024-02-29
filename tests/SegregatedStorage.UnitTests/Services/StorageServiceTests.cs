@@ -31,6 +31,23 @@ public class StorageServiceTests
 	}
 
 	[Fact]
+	public async Task UploadAsync_WithPredefinedId_IsUploadedWithSpecifiedId()
+	{
+		// Arrange
+		var bytes = "Hello world"u8.ToArray();
+		var ms = new MemoryStream(bytes);
+
+		// Act
+		var id = Guid.NewGuid();
+		await _service.UploadAsync(42, id, "hello.txt", "text/plain", ms);
+
+		// Assert
+		var (file, data) = await _service.DownloadAsync(42, id);
+		Assert.NotNull(file);
+		Assert.NotNull(data);
+	}
+
+	[Fact]
 	public async Task UploadAsync_FileNameAlreadyExist_IsUploaded()
 	{
 		// Arrange
@@ -56,7 +73,7 @@ public class StorageServiceTests
 	public async Task DownloadAsync_StateIsDeleting_Throws()
 	{
 		// Arrange
-		var file = FileAggregate.Create("hello.txt", "text/plain").Delete();
+		var file = FileAggregate.Create(Guid.NewGuid(), "hello.txt", "text/plain").Delete();
 		await _repositoryLocator.GetService(42).PersistAsync(file);
 
 		// Act && Assert
@@ -67,7 +84,7 @@ public class StorageServiceTests
 	public async Task DownloadAsync_StateIsAwaiting_Throws()
 	{
 		// Arrange
-		var file = FileAggregate.Create("hello.txt", "text/plain");
+		var file = FileAggregate.Create(Guid.NewGuid(), "hello.txt", "text/plain");
 		await _repositoryLocator.GetService(42).PersistAsync(file);
 
 		// Act && Assert
@@ -106,7 +123,7 @@ public class StorageServiceTests
 	public async Task DeleteAsync_StateIsDeleting_Throws()
 	{
 		// Arrange
-		var file = FileAggregate.Create("hello.txt", "text/plain").Delete();
+		var file = FileAggregate.Create(Guid.NewGuid(), "hello.txt", "text/plain").Delete();
 		await _repositoryLocator.GetService(42).PersistAsync(file);
 
 		// Act && Assert

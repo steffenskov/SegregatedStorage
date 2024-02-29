@@ -1,29 +1,29 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
-    <Nullable>enable</Nullable>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    <Version>1.1.0</Version>
-    <Authors>Steffen Skov</Authors>
-    <Company>Steffen Skov</Company>
-    <Description>Extension to SegregatedStorage adding support for MongoDB for storing metadata</Description>
-    <Copyright>Steffen Skov 2024</Copyright>
-    <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <PackageProjectUrl>https://github.com/steffenskov/SegregatedStorage.MongoFileRepository</PackageProjectUrl>
-    <PackageTags>storage, segregation</PackageTags>
-    <PackageReadmeFile>README.md</PackageReadmeFile>
-    <RootNamespace>SegregatedStorage</RootNamespace>
-  </PropertyGroup>
-  <ItemGroup>
-    <None Include="../../README.md" Pack="true" PackagePath="\"/>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\SegregatedStorage\SegregatedStorage.csproj" />
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="MongoDB.Driver" Version="2.24.0" />
-  </ItemGroup>
+    <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+        <Nullable>enable</Nullable>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+        <Version>1.2.0</Version>
+        <Authors>Steffen Skov</Authors>
+        <Company>Steffen Skov</Company>
+        <Description>Extension to SegregatedStorage adding support for MongoDB for storing metadata</Description>
+        <Copyright>Steffen Skov 2024</Copyright>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+        <PackageProjectUrl>https://github.com/steffenskov/SegregatedStorage.MongoFileRepository</PackageProjectUrl>
+        <PackageTags>storage, segregation</PackageTags>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+        <RootNamespace>SegregatedStorage</RootNamespace>
+    </PropertyGroup>
+    <ItemGroup>
+        <None Include="../../README.md" Pack="true" PackagePath="\"/>
+    </ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\SegregatedStorage\SegregatedStorage.csproj"/>
+    </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="MongoDB.Driver" Version="2.24.0"/>
+    </ItemGroup>
 
 </Project>
