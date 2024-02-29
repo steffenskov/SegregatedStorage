@@ -7,11 +7,11 @@ public record FileAggregate
 	public string MimeType { get; private init; } = default!;
 	public FileState State { get; private init; }
 
-	public static FileAggregate Create(string filename, string mimeType)
+	public static FileAggregate Create(Guid id, string filename, string mimeType)
 	{
 		return new FileAggregate
 		{
-			Id = Guid.NewGuid(),
+			Id = id,
 			FileName = filename,
 			MimeType = mimeType,
 			State = FileState.AwaitingUpload
