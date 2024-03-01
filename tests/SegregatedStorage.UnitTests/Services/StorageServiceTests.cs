@@ -22,10 +22,10 @@ public class StorageServiceTests
 		var ms = new MemoryStream(bytes);
 
 		// Act
-		var id = await _service.UploadAsync(42, "hello.txt", "text/plain", ms);
+		var uploadedFile = await _service.UploadAsync(42, "hello.txt", "text/plain", ms);
 
 		// Assert
-		var (file, data) = await _service.DownloadAsync(42, id);
+		var (file, data) = await _service.DownloadAsync(42, uploadedFile.Id);
 		Assert.NotNull(file);
 		Assert.NotNull(data);
 	}
@@ -97,14 +97,14 @@ public class StorageServiceTests
 		// Arrange
 		var bytes = "Hello world"u8.ToArray();
 		var ms = new MemoryStream(bytes);
-		var id = await _service.UploadAsync(42, "hello.txt", "text/plain", ms);
+		var uploadedFile = await _service.UploadAsync(42, "hello.txt", "text/plain", ms);
 
 		// Act
-		var (file, data) = await _service.DownloadAsync(42, id);
+		var (file, data) = await _service.DownloadAsync(42, uploadedFile.Id);
 		Assert.Equal("hello.txt", file.FileName);
 		Assert.Equal("text/plain", file.MimeType);
 		Assert.Equal(FileState.Available, file.State);
-		Assert.Equal(id, file.Id);
+		Assert.Equal(uploadedFile, file);
 
 		using var ms2 = new MemoryStream();
 		await data.CopyToAsync(ms2);
@@ -136,10 +136,10 @@ public class StorageServiceTests
 		// Arrange
 		var bytes = "Hello world"u8.ToArray();
 		var ms = new MemoryStream(bytes);
-		var id = await _service.UploadAsync(42, "hello.txt", "text/plain", ms);
+		var uploadedFile = await _service.UploadAsync(42, "hello.txt", "text/plain", ms);
 
 		// Act
-		var ex = await Record.ExceptionAsync(async () => await _service.DeleteAsync(42, id));
+		var ex = await Record.ExceptionAsync(async () => await _service.DeleteAsync(42, uploadedFile.Id));
 
 		// Assert
 		Assert.Null(ex);
