@@ -1,15 +1,15 @@
 namespace SegregatedStorage.Aggregates;
 
-public record FileAggregate
+public record StoredFile
 {
 	public Guid Id { get; private init; }
 	public string FileName { get; private init; } = default!;
 	public string MimeType { get; private init; } = default!;
 	public FileState State { get; private init; }
 
-	public static FileAggregate Create(Guid id, string filename, string mimeType)
+	public static StoredFile Create(Guid id, string filename, string mimeType)
 	{
-		return new FileAggregate
+		return new StoredFile
 		{
 			Id = id,
 			FileName = filename,
@@ -18,7 +18,7 @@ public record FileAggregate
 		};
 	}
 
-	public FileAggregate Delete()
+	public StoredFile Delete()
 	{
 		return this with
 		{
@@ -26,7 +26,7 @@ public record FileAggregate
 		};
 	}
 
-	public FileAggregate Uploaded()
+	public StoredFile Uploaded()
 	{
 		return this with
 		{
