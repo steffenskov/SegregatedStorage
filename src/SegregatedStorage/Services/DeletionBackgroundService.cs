@@ -57,19 +57,19 @@ internal class DeletionBackgroundService<TKey> : IHostedService
 		}
 	}
 
-	private async Task DeleteFileAsync(TKey key, IFileRepository repository, FileAggregate file, CancellationToken cancellationToken)
+	private async Task DeleteFileAsync(TKey key, IFileRepository repository, StoredFile storedFile, CancellationToken cancellationToken)
 	{
-		var deleted = await DeleteFromStorageProviderAsync(key, file, cancellationToken);
+		var deleted = await DeleteFromStorageProviderAsync(key, storedFile, cancellationToken);
 
-		if (deleted) await repository.DeleteAsync(file.Id, cancellationToken);
+		if (deleted) await repository.DeleteAsync(storedFile.Id, cancellationToken);
 	}
 
-	private async Task<bool> DeleteFromStorageProviderAsync(TKey key, FileAggregate file, CancellationToken cancellationToken)
+	private async Task<bool> DeleteFromStorageProviderAsync(TKey key, StoredFile storedFile, CancellationToken cancellationToken)
 	{
 		var storageProvider = _storageProviderLocator.GetService(key);
 		try
 		{
-			await storageProvider.DeleteAsync(FilePathGenerator.GenerateFilePath(file.Id), cancellationToken);
+			await storageProvider.DeleteAsync(FilePathGenerator.GenerateFilePath(storedFile.Id), cancellationToken);
 			return true;
 		}
 		catch (FileNotFoundException)

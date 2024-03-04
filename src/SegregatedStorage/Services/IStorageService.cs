@@ -12,7 +12,7 @@ public interface IStorageService<in TKey>
 	/// <param name="data">The actual data contents of the file.</param>
 	/// <param name="cancellationToken">CancellationToken, can be omitted</param>
 	/// <returns>Id of the file uploaded.</returns>
-	ValueTask<FileAggregate> UploadAsync(TKey key, string filename, string mimeType, Stream data, CancellationToken cancellationToken = default);
+	ValueTask<StoredFile> UploadAsync(TKey key, string filename, string mimeType, Stream data, CancellationToken cancellationToken = default);
 
 	/// <summary>
 	///     Uploads a file to the storage service using the given id.
@@ -24,7 +24,7 @@ public interface IStorageService<in TKey>
 	/// <param name="data">The actual data contents of the file.</param>
 	/// <param name="cancellationToken">CancellationToken, can be omitted</param>
 	/// <returns>Id of the file uploaded.</returns>
-	ValueTask<FileAggregate> UploadAsync(TKey key, Guid id, string filename, string mimeType, Stream data, CancellationToken cancellationToken = default);
+	ValueTask<StoredFile> UploadAsync(TKey key, Guid id, string filename, string mimeType, Stream data, CancellationToken cancellationToken = default);
 
 	/// <summary>
 	///     Downloads a file from the storage service.
@@ -33,7 +33,7 @@ public interface IStorageService<in TKey>
 	/// <param name="id">Id of the file to download, will throw FileNotFoundException if no such file exists.</param>
 	/// <param name="cancellationToken">CancellationToken, can be omitted</param>
 	/// <returns>Stream with the actual data contents of the file.</returns>
-	ValueTask<(FileAggregate File, Stream Data)> DownloadAsync(TKey key, Guid id, CancellationToken cancellationToken = default);
+	ValueTask<(StoredFile File, Stream Data)> DownloadAsync(TKey key, Guid id, CancellationToken cancellationToken = default);
 
 	/// <summary>
 	///     Deletes a file from the storage service.

@@ -4,15 +4,15 @@ namespace SegregatedStorage.Repositories;
 
 internal class InMemoryFileRepository : IFileRepository
 {
-	private readonly ConcurrentDictionary<Guid, FileAggregate> _files = new();
+	private readonly ConcurrentDictionary<Guid, StoredFile> _files = new();
 
-	public ValueTask PersistAsync(FileAggregate file, CancellationToken cancellationToken = default)
+	public ValueTask PersistAsync(StoredFile storedFile, CancellationToken cancellationToken = default)
 	{
-		_files[file.Id] = file;
+		_files[storedFile.Id] = storedFile;
 		return ValueTask.CompletedTask;
 	}
 
-	public ValueTask<FileAggregate> GetAsync(Guid id, CancellationToken cancellationToken = default)
+	public ValueTask<StoredFile> GetAsync(Guid id, CancellationToken cancellationToken = default)
 	{
 		if (_files.TryGetValue(id, out var result))
 			return ValueTask.FromResult(result);
@@ -28,7 +28,7 @@ internal class InMemoryFileRepository : IFileRepository
 		return ValueTask.CompletedTask;
 	}
 
-	public ValueTask<IEnumerable<FileAggregate>> GetForDeletionAsync(CancellationToken cancellationToken = default)
+	public ValueTask<IEnumerable<StoredFile>> GetForDeletionAsync(CancellationToken cancellationToken = default)
 	{
 		var result = _files.Values.Where(file => file.State == FileState.Deleting);
 

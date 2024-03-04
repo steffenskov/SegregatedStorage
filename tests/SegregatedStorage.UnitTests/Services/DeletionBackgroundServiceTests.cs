@@ -30,7 +30,7 @@ public class DeletionBackgroundServiceTests
 		var getForDeletionCalled = false;
 		var repository = Substitute.For<IFileRepository>();
 		repository.When(rep => rep.GetForDeletionAsync()).Do(_ => { getForDeletionCalled = true; });
-		repository.GetForDeletionAsync().Returns(ValueTask.FromResult(Enumerable.Empty<FileAggregate>()));
+		repository.GetForDeletionAsync().Returns(ValueTask.FromResult(Enumerable.Empty<StoredFile>()));
 
 		var repositoryLocator = Substitute.For<IKeyServiceLocator<int, IFileRepository>>();
 		repositoryLocator.GetServices().Returns([(42, repository)]);
@@ -50,7 +50,7 @@ public class DeletionBackgroundServiceTests
 		// Arrange
 		const int key1 = 42;
 		const int key2 = 1337;
-		var file = FileAggregate.Create(Guid.NewGuid(), "hello world", "plain/text");
+		var file = StoredFile.Create(Guid.NewGuid(), "hello world", "plain/text");
 		var storageProviderDeleteCalled = new Dictionary<int, bool>();
 		var repositoryDeleteCalled = new Dictionary<int, bool>();
 

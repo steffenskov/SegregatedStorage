@@ -12,17 +12,17 @@ internal class StorageService<TKey> : IStorageService<TKey>
 		_repositoryLocator = repositoryLocator;
 	}
 
-	public async ValueTask<FileAggregate> UploadAsync(TKey key, string filename, string mimeType, Stream data, CancellationToken cancellationToken = default)
+	public async ValueTask<StoredFile> UploadAsync(TKey key, string filename, string mimeType, Stream data, CancellationToken cancellationToken = default)
 	{
 		var id = Guid.NewGuid();
 		return await UploadAsync(key, id, filename, mimeType, data, cancellationToken);
 	}
 
-	public async ValueTask<FileAggregate> UploadAsync(TKey key, Guid id, string filename, string mimeType, Stream data, CancellationToken cancellationToken = default)
+	public async ValueTask<StoredFile> UploadAsync(TKey key, Guid id, string filename, string mimeType, Stream data, CancellationToken cancellationToken = default)
 	{
 		var repository = _repositoryLocator.GetService(key);
 		var storageProvider = _storageProviderLocator.GetService(key);
-		var file = FileAggregate.Create(id, filename, mimeType);
+		var file = StoredFile.Create(id, filename, mimeType);
 		await repository.PersistAsync(file, cancellationToken);
 
 		try
@@ -39,7 +39,7 @@ internal class StorageService<TKey> : IStorageService<TKey>
 		}
 	}
 
-	public async ValueTask<(FileAggregate File, Stream Data)> DownloadAsync(TKey key, Guid id, CancellationToken cancellationToken = default)
+	public async ValueTask<(StoredFile File, Stream Data)> DownloadAsync(TKey key, Guid id, CancellationToken cancellationToken = default)
 	{
 		var repository = _repositoryLocator.GetService(key);
 		var storageProvider = _storageProviderLocator.GetService(key);

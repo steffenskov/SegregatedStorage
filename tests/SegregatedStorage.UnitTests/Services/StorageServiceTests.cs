@@ -73,7 +73,7 @@ public class StorageServiceTests
 	public async Task DownloadAsync_StateIsDeleting_Throws()
 	{
 		// Arrange
-		var file = FileAggregate.Create(Guid.NewGuid(), "hello.txt", "text/plain").Delete();
+		var file = StoredFile.Create(Guid.NewGuid(), "hello.txt", "text/plain").Delete();
 		await _repositoryLocator.GetService(42).PersistAsync(file);
 
 		// Act && Assert
@@ -84,7 +84,7 @@ public class StorageServiceTests
 	public async Task DownloadAsync_StateIsAwaiting_Throws()
 	{
 		// Arrange
-		var file = FileAggregate.Create(Guid.NewGuid(), "hello.txt", "text/plain");
+		var file = StoredFile.Create(Guid.NewGuid(), "hello.txt", "text/plain");
 		await _repositoryLocator.GetService(42).PersistAsync(file);
 
 		// Act && Assert
@@ -123,7 +123,7 @@ public class StorageServiceTests
 	public async Task DeleteAsync_StateIsDeleting_Throws()
 	{
 		// Arrange
-		var file = FileAggregate.Create(Guid.NewGuid(), "hello.txt", "text/plain").Delete();
+		var file = StoredFile.Create(Guid.NewGuid(), "hello.txt", "text/plain").Delete();
 		await _repositoryLocator.GetService(42).PersistAsync(file);
 
 		// Act && Assert

@@ -2,8 +2,8 @@ namespace SegregatedStorage.Repositories;
 
 public interface IFileRepository
 {
-	ValueTask PersistAsync(FileAggregate file, CancellationToken cancellationToken = default);
-	ValueTask<FileAggregate> GetAsync(Guid id, CancellationToken cancellationToken = default);
+	ValueTask PersistAsync(StoredFile storedFile, CancellationToken cancellationToken = default);
+	ValueTask<StoredFile> GetAsync(Guid id, CancellationToken cancellationToken = default);
 	ValueTask DeleteAsync(Guid id, CancellationToken cancellationToken = default);
-	ValueTask<IEnumerable<FileAggregate>> GetForDeletionAsync(CancellationToken cancellationToken = default);
+	ValueTask<IEnumerable<StoredFile>> GetForDeletionAsync(CancellationToken cancellationToken = default);
 }
