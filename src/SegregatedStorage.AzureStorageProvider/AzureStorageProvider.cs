@@ -17,14 +17,8 @@ internal class AzureStorageProvider : IStorageProvider
 
 	public async ValueTask UploadAsync(string filePath, Stream data, CancellationToken cancellationToken = default)
 	{
-		try
-		{
-			await _client.UploadBlobAsync(filePath, data, cancellationToken);
-		}
-		catch (RequestFailedException ex) when (ex.Status == 409)
-		{
-			throw new ArgumentException($"File already exists at path {filePath}", nameof(filePath));
-		}
+		var blobClient = _client.GetBlobClient(filePath);
+		await blobClient.UploadAsync(data, true, cancellationToken);
 	}
 
 	public async ValueTask DeleteAsync(string filePath, CancellationToken cancellationToken = default)
