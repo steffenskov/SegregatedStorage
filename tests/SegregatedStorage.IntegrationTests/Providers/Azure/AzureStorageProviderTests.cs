@@ -35,7 +35,7 @@ public class AzureStorageProviderTests : BaseTests
 	}
 
 	[Fact]
-	public async Task UploadAsync_FileExists_Throws()
+	public async Task UploadAsync_FileExists_Overwrites()
 	{
 		// Arrange
 		var filePath = Guid.NewGuid().ToString();
@@ -45,9 +45,11 @@ public class AzureStorageProviderTests : BaseTests
 		await provider.UploadAsync(filePath, stream);
 		stream.Seek(0, SeekOrigin.Begin);
 
-		// Act && Assert
-		var ex = await Assert.ThrowsAsync<ArgumentException>(async () => await provider.UploadAsync(filePath, stream));
-		Assert.Contains($"File already exists at path {filePath}", ex.Message);
+		// Act
+		var ex = await Record.ExceptionAsync(async () => await provider.UploadAsync(filePath, stream));
+		
+		// Assert
+		Assert.Null(ex);
 	}
 
 	[Fact]
