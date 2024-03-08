@@ -2,13 +2,11 @@ using Microsoft.Extensions.Hosting;
 
 namespace SegregatedStorage.Services;
 
-internal class DeletionBackgroundService<TKey> : IHostedService
+internal class DeletionBackgroundService<TKey> : BackgroundService
 	where TKey : notnull
 {
 	private readonly IKeyServiceLocator<TKey, IFileRepository> _repositoryLocator;
 	private readonly IKeyServiceLocator<TKey, IStorageProvider> _storageProviderLocator;
-	private CancellationTokenSource? _cancellationTokenSource;
-	private Task? _deletionLoop;
 
 	public DeletionBackgroundService(IKeyServiceLocator<TKey, IFileRepository> repositoryLocator, IKeyServiceLocator<TKey, IStorageProvider> storageProviderLocator)
 	{
@@ -16,33 +14,13 @@ internal class DeletionBackgroundService<TKey> : IHostedService
 		_storageProviderLocator = storageProviderLocator;
 	}
 
-	public Task StartAsync(CancellationToken cancellationToken)
+	protected override async Task ExecuteAsync(CancellationToken stoppingToken)
 	{
-		if (_deletionLoop is null)
+		while (!stoppingToken.IsCancellationRequested)
 		{
-			_cancellationTokenSource = new CancellationTokenSource();
-			_deletionLoop = DeletionLoop(_cancellationTokenSource.Token);
-		}
+			await DeleteFromRepositoriesAsync(stoppingToken);
 
-		return Task.CompletedTask;
-	}
-
-	public Task StopAsync(CancellationToken cancellationToken)
-	{
-		_cancellationTokenSource?.Cancel();
-		_deletionLoop = null;
-		return Task.CompletedTask;
-	}
-
-	private async Task DeletionLoop(object? state)
-	{
-		var cancellationToken = (CancellationToken)state!;
-
-		while (!cancellationToken.IsCancellationRequested)
-		{
-			await DeleteFromRepositoriesAsync(cancellationToken);
-
-			await Task.Delay(TimeSpan.FromMinutes(1), cancellationToken);
+			await Task.Delay(TimeSpan.FromMinutes(5), stoppingToken);
 		}
 	}
 
