@@ -4,6 +4,10 @@ on:
   push:
     branches: [ main ]
 
+concurrency:
+  group: nuget-${{ github.ref }}
+  cancel-in-progress: true
+
 env:
   PROJECT_PATH: 'src/SegregatedStorage/SegregatedStorage.csproj'
   AZURE_PROJECT_PATH: 'src/SegregatedStorage.AzureStorageProvider/SegregatedStorage.AzureStorageProvider.csproj'
@@ -51,32 +55,14 @@ jobs:
     - name: 'Build project'
       run: dotnet build ${{ env.SOLUTION_PATH }} --no-restore --configuration Release
 
-    - name: 'Get main version'
-      id: version
-      uses: bbonkr/get-version-action@v1.2.1
-      with:
-        project: ${{ env.PROJECT_PATH }}
-
-    - name: 'Get Azure version'
-      id: azure_version
-      uses: bbonkr/get-version-action@v1.2.1
-      with:
-        project: ${{ env.AZURE_PROJECT_PATH }}
-
-    - name: 'Get Mongo version'
-      id: mongo_version
-      uses: bbonkr/get-version-action@v1.2.1
-      with:
-        project: ${{ env.MONGO_PROJECT_PATH }}
-
     - name: 'Pack main project'
-      run: dotnet pack ${{ env.PROJECT_PATH }} --no-restore --no-build --configuration Release --include-symbols -p:SymbolPackageFormat=snupkg -p:PackageVersion=${{ steps.version.outputs.version }} --output ${{ env.PACKAGE_OUTPUT_DIRECTORY }}
+      run: dotnet pack ${{ env.PROJECT_PATH }} --no-restore --no-build --configuration Release --include-symbols -p:SymbolPackageFormat=snupkg --output ${{ env.PACKAGE_OUTPUT_DIRECTORY }}
 
     - name: 'Pack Azure extension'
-      run: dotnet pack ${{ env.AZURE_PROJECT_PATH }} --no-restore --no-build --configuration Release --include-symbols -p:SymbolPackageFormat=snupkg -p:PackageVersion=${{ steps.azure_version.outputs.version }} --output ${{ env.PACKAGE_OUTPUT_DIRECTORY }}
+      run: dotnet pack ${{ env.AZURE_PROJECT_PATH }} --no-restore --no-build --configuration Release --include-symbols -p:SymbolPackageFormat=snupkg --output ${{ env.PACKAGE_OUTPUT_DIRECTORY }}
 
     - name: 'Pack Mongo extension'
-      run: dotnet pack ${{ env.MONGO_PROJECT_PATH }} --no-restore --no-build --configuration Release --include-symbols -p:SymbolPackageFormat=snupkg -p:PackageVersion=${{ steps.mongo_version.outputs.version }} --output ${{ env.PACKAGE_OUTPUT_DIRECTORY }}
+      run: dotnet pack ${{ env.MONGO_PROJECT_PATH }} --no-restore --no-build --configuration Release --include-symbols -p:SymbolPackageFormat=snupkg --output ${{ env.PACKAGE_OUTPUT_DIRECTORY }}
 
     - name: 'Push package'
       run: dotnet nuget push ${{ env.PACKAGE_OUTPUT_DIRECTORY }}/*.nupkg -k ${{ secrets.NUGET_API_KEY }} -s ${{ env.NUGET_SOURCE_URL }} --skip-duplicate
