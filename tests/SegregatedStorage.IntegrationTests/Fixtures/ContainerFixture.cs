@@ -16,6 +16,7 @@ public class ContainerFixture : IAsyncLifetime
 			.Build();
 
 		_azureContainer = new AzuriteBuilder()
+			.WithImage("mcr.microsoft.com/azure-storage/azurite:latest")
 			.Build();
 	}
 
