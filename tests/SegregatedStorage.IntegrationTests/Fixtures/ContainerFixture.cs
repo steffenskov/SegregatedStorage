@@ -17,6 +17,7 @@ public class ContainerFixture : IAsyncLifetime
 
 		_azureContainer = new AzuriteBuilder()
 			.WithImage("mcr.microsoft.com/azure-storage/azurite:latest")
+			.WithCommand("--skipApiVersionCheck")
 			.Build();
 	}
 
