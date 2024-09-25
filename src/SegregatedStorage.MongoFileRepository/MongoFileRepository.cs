@@ -15,9 +15,9 @@ internal class MongoFileRepository : IFileRepository
 		CreateIndex(builder => builder.Descending(e => e.State));
 	}
 
-	public async ValueTask PersistAsync(StoredFile StoredFile, CancellationToken cancellationToken = default)
+	public async ValueTask PersistAsync(StoredFile storedFile, CancellationToken cancellationToken = default)
 	{
-		await _collection.ReplaceOneAsync(f => f.Id == StoredFile.Id, StoredFile, new ReplaceOptions
+		await _collection.ReplaceOneAsync(f => f.Id == storedFile.Id, storedFile, new ReplaceOptions
 		{
 			IsUpsert = true
 		}, cancellationToken: cancellationToken);
