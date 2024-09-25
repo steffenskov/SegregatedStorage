@@ -11,6 +11,7 @@ public class ContainerFixture : IAsyncLifetime
 	public ContainerFixture()
 	{
 		_mongoContainer = new MongoDbBuilder()
+			.WithImage("mongo:latest")
 			.WithUsername("mongo")
 			.WithPassword("secret")
 			.Build();
