@@ -1,4 +1,7 @@
-﻿using MongoDB.Driver;
+﻿using MongoDB.Bson;
+using MongoDB.Bson.Serialization;
+using MongoDB.Bson.Serialization.Serializers;
+using MongoDB.Driver;
 using SegregatedStorage.Aggregates;
 using SegregatedStorage.Repositories;
 using SegregatedStorage.ValueObjects;
@@ -8,6 +11,11 @@ namespace SegregatedStorage;
 internal class MongoFileRepository : IFileRepository
 {
 	private readonly IMongoCollection<StoredFile> _collection;
+
+	static MongoFileRepository()
+	{
+		BsonSerializer.RegisterSerializer(new GuidSerializer(GuidRepresentation.Standard));
+	}
 
 	public MongoFileRepository(IMongoDatabase db, string collectionName)
 	{
