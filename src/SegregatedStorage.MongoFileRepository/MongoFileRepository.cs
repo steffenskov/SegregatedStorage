@@ -28,29 +28,37 @@ internal class MongoFileRepository : IFileRepository
 		await _collection.ReplaceOneAsync(f => f.Id == storedFile.Id, storedFile, new ReplaceOptions
 		{
 			IsUpsert = true
-		}, cancellationToken: cancellationToken);
+		}, cancellationToken);
 	}
 
 	public async ValueTask<StoredFile> GetAsync(Guid id, CancellationToken cancellationToken = default)
 	{
-		var cursor = await _collection.FindAsync(f => f.Id == id, cancellationToken: cancellationToken);
-		var result = await cursor.FirstOrDefaultAsync(cancellationToken);
+		var find = _collection.Find(f => f.Id == id);
+		var result = await find.FirstOrDefaultAsync(cancellationToken);
 
 		return result ?? throw new FileNotFoundException($"File not found with id {id}");
 	}
 
+	public async ValueTask<IEnumerable<StoredFile>> GetManyAsync(IEnumerable<Guid> ids, CancellationToken cancellationToken = default)
+	{
+		var find = _collection.Find(f => ids.Contains(f.Id));
+		return await find.ToListAsync(cancellationToken);
+	}
+
 	public async ValueTask DeleteAsync(Guid id, CancellationToken cancellationToken = default)
 	{
-		var result = await _collection.DeleteOneAsync(f => f.Id == id, cancellationToken: cancellationToken);
+		var result = await _collection.DeleteOneAsync(f => f.Id == id, cancellationToken);
 		if (result.DeletedCount == 0)
+		{
 			throw new FileNotFoundException($"File not found with id {id}");
+		}
 	}
 
 	public async ValueTask<IEnumerable<StoredFile>> GetForDeletionAsync(CancellationToken cancellationToken = default)
 	{
-		var cursor = await _collection.FindAsync(f => f.State == FileState.Deleting, cancellationToken: cancellationToken);
+		var find = _collection.Find(f => f.State == FileState.Deleting);
 
-		return await cursor.ToListAsync(cancellationToken);
+		return await find.ToListAsync(cancellationToken);
 	}
 
 	private void CreateIndex(Func<IndexKeysDefinitionBuilder<StoredFile>, IndexKeysDefinition<StoredFile>> configureIndex, CreateIndexOptions? options = default)

@@ -42,4 +42,22 @@ public interface IStorageService<in TKey>
 	/// <param name="id">Id of the file to download, will throw FileNotFoundException if no such file exists.</param>
 	/// <param name="cancellationToken">CancellationToken, can be omitted</param>
 	ValueTask DeleteAsync(TKey key, Guid id, CancellationToken cancellationToken = default);
+
+	/// <summary>
+	///     Fetches the metadata for a bunch of files.
+	/// </summary>
+	/// <param name="key">Key used for data segregation</param>
+	/// <param name="ids">Ids of the files to fetch.</param>
+	/// <param name="cancellationToken">CancellationToken, can be omitted</param>
+	/// <returns>Dictionary of file metadata</returns>
+	ValueTask<IDictionary<Guid, StoredFile>> GetManyAsync(TKey key, IEnumerable<Guid> ids, CancellationToken cancellationToken = default);
+
+	/// <summary>
+	///     Fetches the metadata for a single file.
+	/// </summary>
+	/// <param name="key">Key used for data segregation</param>
+	/// <param name="id">Id of the file to fetch, will throw FileNotFoundException if no such file exists.</param>
+	/// <param name="cancellationToken">CancellationToken, can be omitted</param>
+	/// <returns>File metadata</returns>
+	ValueTask<StoredFile> GetAsync(TKey key, Guid id, CancellationToken cancellationToken = default);
 }

@@ -144,4 +144,108 @@ public class StorageServiceTests
 		// Assert
 		Assert.Null(ex);
 	}
+
+	[Fact]
+	public async Task GetAsync_DoesNotExist_Throws()
+	{
+		// Act && Assert
+		await Assert.ThrowsAsync<FileNotFoundException>(async () => await _service.GetAsync(42, Guid.NewGuid()));
+	}
+
+	[Fact]
+	public async Task GetAsync_StateIsDeleting_Throws()
+	{
+		// Arrange
+		var file = StoredFile.Create(Guid.NewGuid(), "hello.txt", "text/plain").Delete();
+		await _repositoryLocator.GetService(42).PersistAsync(file);
+
+		// Act && Assert
+		await Assert.ThrowsAsync<FileNotFoundException>(async () => await _service.GetAsync(42, file.Id));
+	}
+
+	[Fact]
+	public async Task GetAsync_StateIsAwaiting_IsReturned()
+	{
+		// Arrange
+		var file = StoredFile.Create(Guid.NewGuid(), "hello.txt", "text/plain");
+		await _repositoryLocator.GetService(42).PersistAsync(file);
+
+		// Act
+		var fetched = await _service.GetAsync(42, file.Id);
+
+		// Assert
+		Assert.Equal(file, fetched);
+	}
+
+	[Fact]
+	public async Task GetAsync_Exists_IsReturned()
+	{
+		// Arrange
+		var bytes = "Hello world"u8.ToArray();
+		var ms = new MemoryStream(bytes);
+		var file = await _service.UploadAsync(42, "hello.txt", "text/plain", ms);
+
+		// Act
+		var fetched = await _service.GetAsync(42, file.Id);
+
+		// Assert
+		Assert.Equal(file, fetched);
+	}
+
+	[Fact]
+	public async Task GetManyAsync_DoesNotExist_ReturnsEmpty()
+	{
+		// Act
+		var result = await _service.GetManyAsync(42, [Guid.NewGuid()]);
+
+		// Assert
+		Assert.Empty(result);
+	}
+
+	[Fact]
+	public async Task GetManyAsync_StateIsDeleting_ReturnsEmpty()
+	{
+		// Arrange
+		var file = StoredFile.Create(Guid.NewGuid(), "hello.txt", "text/plain").Delete();
+		await _repositoryLocator.GetService(42).PersistAsync(file);
+
+		// Act
+		var result = await _service.GetManyAsync(42, [file.Id]);
+
+		// Assert
+		Assert.Empty(result);
+	}
+
+	[Fact]
+	public async Task GetManyAsync_StateIsAwaiting_IsReturned()
+	{
+		// Arrange
+		var file = StoredFile.Create(Guid.NewGuid(), "hello.txt", "text/plain");
+		await _repositoryLocator.GetService(42).PersistAsync(file);
+
+
+		// Act
+		var result = await _service.GetManyAsync(42, [file.Id]);
+
+		// Assert
+		Assert.Contains(file, result.Values);
+	}
+
+	[Fact]
+	public async Task GetManyAsync_Exists_IsReturned()
+	{
+		// Arrange
+		var bytes = "Hello world"u8.ToArray();
+		var ms = new MemoryStream(bytes);
+		var file = await _service.UploadAsync(42, "hello.txt", "text/plain", ms);
+		var file2 = StoredFile.Create(Guid.NewGuid(), "hello.txt", "text/plain");
+		await _repositoryLocator.GetService(42).PersistAsync(file2);
+
+		// Act
+		var result = await _service.GetManyAsync(42, [file.Id, file2.Id]);
+
+		// Assert
+		Assert.Contains(file, result.Values);
+		Assert.Contains(file2, result.Values);
+	}
 }
