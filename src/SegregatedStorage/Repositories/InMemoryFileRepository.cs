@@ -15,15 +15,26 @@ internal class InMemoryFileRepository : IFileRepository
 	public ValueTask<StoredFile> GetAsync(Guid id, CancellationToken cancellationToken = default)
 	{
 		if (_files.TryGetValue(id, out var result))
+		{
 			return ValueTask.FromResult(result);
+		}
 
 		throw new FileNotFoundException($"File not found with id {id}");
+	}
+
+	public ValueTask<IEnumerable<StoredFile>> GetManyAsync(IEnumerable<Guid> ids, CancellationToken cancellationToken = default)
+	{
+		var idSet = ids.ToHashSet();
+		var result = _files.Values.Where(file => idSet.Contains(file.Id));
+		return ValueTask.FromResult(result);
 	}
 
 	public ValueTask DeleteAsync(Guid id, CancellationToken cancellationToken = default)
 	{
 		if (!_files.TryRemove(id, out _))
+		{
 			throw new FileNotFoundException($"File not found with id {id}");
+		}
 
 		return ValueTask.CompletedTask;
 	}

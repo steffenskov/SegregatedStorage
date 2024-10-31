@@ -46,10 +46,14 @@ internal class StorageService<TKey> : IStorageService<TKey>
 		var file = await repository.GetAsync(id, cancellationToken);
 
 		if (file is null || file.State == FileState.Deleting)
+		{
 			throw new FileNotFoundException($"File not found with id {id}");
+		}
 
 		if (file.State == FileState.AwaitingUpload)
+		{
 			throw new InvalidOperationException($"File with id {id} has not uploaded its data yet");
+		}
 
 		var stream = await storageProvider.DownloadAsync(FilePathGenerator.GenerateFilePath(id), cancellationToken);
 
@@ -61,9 +65,32 @@ internal class StorageService<TKey> : IStorageService<TKey>
 		var repository = _repositoryLocator.GetService(key);
 		var file = await repository.GetAsync(id, cancellationToken);
 		if (file is null || file.State == FileState.Deleting)
+		{
 			throw new FileNotFoundException($"File not found with id {id}");
+		}
 
 		var deletedFile = file.Delete();
 		await repository.PersistAsync(deletedFile, cancellationToken);
+	}
+
+	public async ValueTask<IDictionary<Guid, StoredFile>> GetManyAsync(TKey key, IEnumerable<Guid> ids, CancellationToken cancellationToken = default)
+	{
+		var repository = _repositoryLocator.GetService(key);
+		var result = await repository.GetManyAsync(ids, cancellationToken);
+		return result.Where(file => file.State != FileState.Deleting)
+			.ToDictionary(file => file.Id, file => file);
+	}
+
+	public async ValueTask<StoredFile> GetAsync(TKey key, Guid id, CancellationToken cancellationToken = default)
+	{
+		var repository = _repositoryLocator.GetService(key);
+		var file = await repository.GetAsync(id, cancellationToken);
+
+		if (file is null || file.State == FileState.Deleting)
+		{
+			throw new FileNotFoundException($"File not found with id {id}");
+		}
+
+		return file;
 	}
 }

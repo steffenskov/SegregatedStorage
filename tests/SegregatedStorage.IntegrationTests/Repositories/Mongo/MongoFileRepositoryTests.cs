@@ -84,6 +84,54 @@ public class MongoFileRepositoryTests : BaseTests
 	}
 
 	[Fact]
+	public async Task GetManyAsync_DoesNotExist_ReturnsEmpty()
+	{
+		// Arrange
+		var repository = _repositoryLocator.GetService(42);
+
+		// Act
+		var result = await repository.GetManyAsync([Guid.NewGuid(), Guid.NewGuid()]);
+
+		// Assert
+		Assert.Empty(result);
+	}
+
+	[Fact]
+	public async Task GetManyAsync_ExistsOnOtherKey_ReturnsEmpty()
+	{
+		// Arrange
+		var repository = _repositoryLocator.GetService(42);
+		var otherRepository = _repositoryLocator.GetService(43);
+		var file = StoredFile.Create(Guid.NewGuid(), "image.jpg", "image/jpg");
+		await repository.PersistAsync(file);
+
+		// Act
+		var result = await otherRepository.GetManyAsync([file.Id]);
+
+		// Assert
+		Assert.Empty(result);
+	}
+
+	[Fact]
+	public async Task GetManyAsync_SomeExist_AreReturned()
+	{
+		// Arrange
+		var repository = _repositoryLocator.GetService(42);
+		var file = StoredFile.Create(Guid.NewGuid(), "image.jpg", "image/jpg");
+		var file2 = StoredFile.Create(Guid.NewGuid(), "text.txt", "text/plain");
+		await repository.PersistAsync(file);
+		await repository.PersistAsync(file2);
+
+		// Act
+		var result = (await repository.GetManyAsync([file.Id, file2.Id, Guid.NewGuid()])).ToList();
+
+		// Assert
+		Assert.Equal(2, result.Count());
+		Assert.Contains(file, result);
+		Assert.Contains(file2, result);
+	}
+
+	[Fact]
 	public async Task DeleteAsync_Exist_IsDeleted()
 	{
 		// Arrange
