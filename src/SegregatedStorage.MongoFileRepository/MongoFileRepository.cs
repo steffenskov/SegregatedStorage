@@ -14,7 +14,14 @@ internal class MongoFileRepository : IFileRepository
 
 	static MongoFileRepository()
 	{
-		BsonSerializer.RegisterSerializer(new GuidSerializer(GuidRepresentation.Standard));
+		try
+		{
+			BsonSerializer.RegisterSerializer(new GuidSerializer(GuidRepresentation.Standard));
+		}
+		catch (BsonSerializationException)
+		{
+			// The above will throw if someone else already registered a Guid serializer for Mongo DB
+		}
 	}
 
 	public MongoFileRepository(IMongoDatabase db, string collectionName)
