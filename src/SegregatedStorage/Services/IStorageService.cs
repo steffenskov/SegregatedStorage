@@ -60,4 +60,14 @@ public interface IStorageService<in TKey>
 	/// <param name="cancellationToken">CancellationToken, can be omitted</param>
 	/// <returns>File metadata</returns>
 	ValueTask<StoredFile> GetAsync(TKey key, Guid id, CancellationToken cancellationToken = default);
+
+	/// <summary>
+	///     Renames the file in its metadata, CANNOT change mimetype of the file even if a new file extension is used.
+	/// </summary>
+	/// <param name="key">Key used for data segregation</param>
+	/// <param name="id">Id of the file to fetch, will throw FileNotFoundException if no such file exists.</param>
+	/// <param name="filename">New filename for the file.</param>
+	/// <param name="cancellationToken">CancellationToken, can be omitted</param>
+	/// <returns>File metadata</returns>
+	ValueTask<StoredFile> RenameAsync(TKey key, Guid id, string filename, CancellationToken cancellationToken = default);
 }

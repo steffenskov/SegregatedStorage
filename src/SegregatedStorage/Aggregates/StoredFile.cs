@@ -33,4 +33,17 @@ public record StoredFile
 			State = FileState.Available
 		};
 	}
+
+	public StoredFile Rename(string filename)
+	{
+		if (string.IsNullOrWhiteSpace(filename))
+		{
+			throw new ArgumentException("filename cannot be null or whitespace", nameof(filename));
+		}
+
+		return this with
+		{
+			FileName = filename
+		};
+	}
 }
