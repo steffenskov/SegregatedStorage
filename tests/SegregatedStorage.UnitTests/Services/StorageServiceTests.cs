@@ -248,4 +248,77 @@ public class StorageServiceTests
 		Assert.Contains(file, result.Values);
 		Assert.Contains(file2, result.Values);
 	}
+
+	[Fact]
+	public async Task RenameAsync_DoesNotExist_Throws()
+	{
+		// Act && Assert
+		await Assert.ThrowsAsync<FileNotFoundException>(async () => await _service.RenameAsync(42, Guid.NewGuid(), "world.txt"));
+	}
+
+	[Fact]
+	public async Task RenameAsync_StateIsDeleting_Throws()
+	{
+		// Arrange
+		var file = StoredFile.Create(Guid.NewGuid(), "hello.txt", "text/plain").Delete();
+		await _repositoryLocator.GetService(42).PersistAsync(file);
+
+		// Act && Assert
+		await Assert.ThrowsAsync<FileNotFoundException>(async () => await _service.RenameAsync(42, file.Id, "world.txt"));
+	}
+
+	[Fact]
+	public async Task RenameAsync_WhitespaceFilename_Throws()
+	{
+		// Arrange
+		var bytes = "Hello world"u8.ToArray();
+		var ms = new MemoryStream(bytes);
+		var file = await _service.UploadAsync(42, "hello.txt", "text/plain", ms);
+		var repository = _repositoryLocator.GetService(42);
+		await repository.PersistAsync(file);
+
+		// Act && Assert
+		var ex = await Assert.ThrowsAsync<ArgumentException>(async () => await _service.RenameAsync(42, file.Id, "   "));
+
+		Assert.Contains("filename cannot be null or whitespace", ex.Message);
+	}
+
+	[Fact]
+	public async Task RenameAsync_ValidFilename_Renamed()
+	{
+		// Arrange
+		var bytes = "Hello world"u8.ToArray();
+		var ms = new MemoryStream(bytes);
+		var file = await _service.UploadAsync(42, "hello.txt", "text/plain", ms);
+		var repository = _repositoryLocator.GetService(42);
+		await repository.PersistAsync(file);
+
+		// Act
+		var result = await _service.RenameAsync(42, file.Id, "world.txt");
+
+		// Assert
+		var fetched = await _service.GetAsync(42, file.Id);
+		Assert.Equal("world.txt", result.FileName);
+		Assert.Equal("world.txt", fetched.FileName);
+	}
+
+	[Fact]
+	public async Task RenameAsync_ValidFilenameWithNewExtension_DoesNotChangeMimeType()
+	{
+		// Arrange
+		var bytes = "Hello world"u8.ToArray();
+		var ms = new MemoryStream(bytes);
+		var file = await _service.UploadAsync(42, "hello.txt", "text/plain", ms);
+		var repository = _repositoryLocator.GetService(42);
+		await repository.PersistAsync(file);
+
+		// Act
+		var result = await _service.RenameAsync(42, file.Id, "world.jpg");
+
+		// Assert
+		var fetched = await _service.GetAsync(42, file.Id);
+		Assert.Equal("world.jpg", result.FileName);
+		Assert.Equal("world.jpg", fetched.FileName);
+		Assert.Equal("text/plain", fetched.MimeType);
+	}
 }

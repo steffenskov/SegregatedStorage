@@ -93,4 +93,20 @@ internal class StorageService<TKey> : IStorageService<TKey>
 
 		return file;
 	}
+
+	public async ValueTask<StoredFile> RenameAsync(TKey key, Guid id, string filename, CancellationToken cancellationToken = default)
+	{
+		var repository = _repositoryLocator.GetService(key);
+		var file = await repository.GetAsync(id, cancellationToken);
+
+		if (file is null || file.State == FileState.Deleting)
+		{
+			throw new FileNotFoundException($"File not found with id {id}");
+		}
+
+		var renamedFile = file.Rename(filename);
+
+		await repository.PersistAsync(renamedFile, cancellationToken);
+		return renamedFile;
+	}
 }
