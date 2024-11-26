@@ -11,7 +11,7 @@ public interface IStorageService<in TKey>
 	/// <param name="mimeType">MimeType of the file, will be used when downloading the file.</param>
 	/// <param name="data">The actual data contents of the file.</param>
 	/// <param name="cancellationToken">CancellationToken, can be omitted</param>
-	/// <returns>Id of the file uploaded.</returns>
+	/// <returns>Metadata for the file uploaded.</returns>
 	ValueTask<StoredFile> UploadAsync(TKey key, string filename, string mimeType, Stream data, CancellationToken cancellationToken = default);
 
 	/// <summary>
@@ -23,7 +23,7 @@ public interface IStorageService<in TKey>
 	/// <param name="mimeType">MimeType of the file, will be used when downloading the file.</param>
 	/// <param name="data">The actual data contents of the file.</param>
 	/// <param name="cancellationToken">CancellationToken, can be omitted</param>
-	/// <returns>Id of the file uploaded.</returns>
+	/// <returns>Metadata for the file uploaded.</returns>
 	ValueTask<StoredFile> UploadAsync(TKey key, Guid id, string filename, string mimeType, Stream data, CancellationToken cancellationToken = default);
 
 	/// <summary>
