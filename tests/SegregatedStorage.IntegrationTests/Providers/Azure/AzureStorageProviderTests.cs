@@ -5,11 +5,11 @@ namespace SegregatedStorage.IntegrationTests.Providers.Azure;
 [Collection(nameof(ConfigurationCollection))]
 public class AzureStorageProviderTests : BaseTests
 {
-	private readonly IKeyServiceLocator<int, IStorageProvider> _providerLocator;
+	private readonly IServiceLocator<int, IStorageProvider> _providerLocator;
 
 	public AzureStorageProviderTests(ContainerFixture fixture) : base(fixture)
 	{
-		_providerLocator = Provider.GetRequiredService<IKeyServiceLocator<int, IStorageProvider>>();
+		_providerLocator = Provider.GetRequiredService<IServiceLocator<int, IStorageProvider>>();
 	}
 
 	[Fact]

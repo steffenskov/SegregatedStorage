@@ -2,14 +2,14 @@ using System.Collections.Concurrent;
 
 namespace SegregatedStorage.Services;
 
-internal class KeyServiceLocator<TKey, TService> : IKeyServiceLocator<TKey, TService>
+internal class ServiceLocator<TKey, TService> : IServiceLocator<TKey, TService>
 	where TKey : notnull
 {
 	private readonly Func<TKey, TService> _factoryMethod;
 	private readonly object _lock = new();
 	private readonly ConcurrentDictionary<TKey, TService> _services = new();
 
-	public KeyServiceLocator(Func<TKey, TService> factoryMethod)
+	public ServiceLocator(Func<TKey, TService> factoryMethod)
 	{
 		_factoryMethod = factoryMethod;
 	}
@@ -17,12 +17,16 @@ internal class KeyServiceLocator<TKey, TService> : IKeyServiceLocator<TKey, TSer
 	public TService GetService(TKey key)
 	{
 		if (_services.TryGetValue(key, out var service))
+		{
 			return service;
+		}
 
 		lock (_lock)
 		{
 			if (_services.TryGetValue(key, out service))
+			{
 				return service;
+			}
 
 			_services[key] = service = _factoryMethod(key);
 			return service;
@@ -35,7 +39,7 @@ internal class KeyServiceLocator<TKey, TService> : IKeyServiceLocator<TKey, TSer
 	}
 }
 
-public interface IKeyServiceLocator<TKey, TService>
+public interface IServiceLocator<TKey, TService>
 {
 	TService GetService(TKey key);
 	IEnumerable<(TKey Key, TService Service)> GetServices();

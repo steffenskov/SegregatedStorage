@@ -3,11 +3,11 @@ namespace SegregatedStorage.IntegrationTests.Repositories.Mongo;
 [Collection(nameof(ConfigurationCollection))]
 public class MongoFileRepositoryTests : BaseTests
 {
-	private readonly IKeyServiceLocator<int, IFileRepository> _repositoryLocator;
+	private readonly IServiceLocator<int, IFileRepository> _repositoryLocator;
 
 	public MongoFileRepositoryTests(ContainerFixture fixture) : base(fixture)
 	{
-		_repositoryLocator = Provider.GetRequiredService<IKeyServiceLocator<int, IFileRepository>>();
+		_repositoryLocator = Provider.GetRequiredService<IServiceLocator<int, IFileRepository>>();
 	}
 
 	[Fact]

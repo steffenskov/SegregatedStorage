@@ -21,7 +21,7 @@ public class AzureSetupTests : BaseTests
 
 		// Assert
 		var provider = services.BuildServiceProvider();
-		var serviceLocator = provider.GetService<IKeyServiceLocator<int, IStorageProvider>>();
+		var serviceLocator = provider.GetService<IServiceLocator<int, IStorageProvider>>();
 
 		Assert.NotNull(serviceLocator);
 		var service = serviceLocator.GetService(42);

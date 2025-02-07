@@ -24,7 +24,7 @@ public class MongoSetupTests : BaseTests
 
 		// Assert
 		var provider = services.BuildServiceProvider();
-		var serviceLocator = provider.GetService<IKeyServiceLocator<int, IFileRepository>>();
+		var serviceLocator = provider.GetService<IServiceLocator<int, IFileRepository>>();
 
 		Assert.NotNull(serviceLocator);
 		var service = serviceLocator.GetService(42);

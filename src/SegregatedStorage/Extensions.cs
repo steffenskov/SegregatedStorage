@@ -22,7 +22,7 @@ public static class Extensions
 
 	public static void ThrowIfKeyServiceLocatorRegistered<TKey, TService>(this IServiceCollection services)
 	{
-		if (services.HasService<IKeyServiceLocator<TKey, TService>>())
+		if (services.HasService<IServiceLocator<TKey, TService>>())
 			throw new InvalidOperationException($"An IKeyServiceLocator<{typeof(TKey).Name}, {typeof(TService).Name}> has already been injected into this IServiceCollection");
 	}
 }

@@ -3,10 +3,10 @@ namespace SegregatedStorage.Services;
 internal class StorageService<TKey> : IStorageService<TKey>
 	where TKey : notnull
 {
-	private readonly IKeyServiceLocator<TKey, IFileRepository> _repositoryLocator;
-	private readonly IKeyServiceLocator<TKey, IStorageProvider> _storageProviderLocator;
+	private readonly IServiceLocator<TKey, IFileRepository> _repositoryLocator;
+	private readonly IServiceLocator<TKey, IStorageProvider> _storageProviderLocator;
 
-	public StorageService(IKeyServiceLocator<TKey, IFileRepository> repositoryLocator, IKeyServiceLocator<TKey, IStorageProvider> storageProviderLocator)
+	public StorageService(IServiceLocator<TKey, IFileRepository> repositoryLocator, IServiceLocator<TKey, IStorageProvider> storageProviderLocator)
 	{
 		_storageProviderLocator = storageProviderLocator;
 		_repositoryLocator = repositoryLocator;

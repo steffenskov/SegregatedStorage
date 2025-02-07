@@ -10,10 +10,10 @@ public class DeletionBackgroundServiceTests
 	{
 		// Arrange
 		var getServicesCalled = false;
-		var repositoryLocator = Substitute.For<IKeyServiceLocator<int, IFileRepository>>();
+		var repositoryLocator = Substitute.For<IServiceLocator<int, IFileRepository>>();
 		repositoryLocator.When(locator => locator.GetServices()).Do(_ => { getServicesCalled = true; });
 		repositoryLocator.GetServices().Returns(Array.Empty<(int, IFileRepository)>());
-		var storageProviderLocator = Substitute.For<IKeyServiceLocator<int, IStorageProvider>>();
+		var storageProviderLocator = Substitute.For<IServiceLocator<int, IStorageProvider>>();
 		var service = new FakeDeletionBackgroundService(repositoryLocator, storageProviderLocator);
 
 		// Act
@@ -32,9 +32,9 @@ public class DeletionBackgroundServiceTests
 		repository.When(rep => rep.GetForDeletionAsync()).Do(_ => { getForDeletionCalled = true; });
 		repository.GetForDeletionAsync().Returns(ValueTask.FromResult(Enumerable.Empty<StoredFile>()));
 
-		var repositoryLocator = Substitute.For<IKeyServiceLocator<int, IFileRepository>>();
+		var repositoryLocator = Substitute.For<IServiceLocator<int, IFileRepository>>();
 		repositoryLocator.GetServices().Returns([(42, repository)]);
-		var storageProviderLocator = Substitute.For<IKeyServiceLocator<int, IStorageProvider>>();
+		var storageProviderLocator = Substitute.For<IServiceLocator<int, IStorageProvider>>();
 		var service = new FakeDeletionBackgroundService(repositoryLocator, storageProviderLocator);
 
 		// Act
@@ -68,9 +68,9 @@ public class DeletionBackgroundServiceTests
 		var storageProvider2 = Substitute.For<IStorageProvider>();
 		storageProvider2.When(provider => provider.DeleteAsync(FilePathGenerator.GenerateFilePath(file.Id))).Do(_ => { storageProviderDeleteCalled[key2] = true; });
 
-		var repositoryLocator = Substitute.For<IKeyServiceLocator<int, IFileRepository>>();
+		var repositoryLocator = Substitute.For<IServiceLocator<int, IFileRepository>>();
 		repositoryLocator.GetServices().Returns([(key1, repository1), (key2, repository2)]);
-		var storageProviderLocator = Substitute.For<IKeyServiceLocator<int, IStorageProvider>>();
+		var storageProviderLocator = Substitute.For<IServiceLocator<int, IStorageProvider>>();
 		storageProviderLocator.GetService(key1).Returns(storageProvider1);
 		storageProviderLocator.GetService(key2).Returns(storageProvider2);
 		var service = new FakeDeletionBackgroundService(repositoryLocator, storageProviderLocator);
@@ -88,7 +88,7 @@ public class DeletionBackgroundServiceTests
 
 file class FakeDeletionBackgroundService : DeletionBackgroundService<int>
 {
-	public FakeDeletionBackgroundService(IKeyServiceLocator<int, IFileRepository> repositoryLocator, IKeyServiceLocator<int, IStorageProvider> storageProviderLocator) : base(
+	public FakeDeletionBackgroundService(IServiceLocator<int, IFileRepository> repositoryLocator, IServiceLocator<int, IStorageProvider> storageProviderLocator) : base(
 		repositoryLocator, storageProviderLocator)
 	{
 	}

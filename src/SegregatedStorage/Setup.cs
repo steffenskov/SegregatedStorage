@@ -38,7 +38,7 @@ public static class Setup
 	{
 		services.ThrowIfKeyServiceLocatorRegistered<TKey, TService>();
 
-		return services.AddSingleton<IKeyServiceLocator<TKey, TService>>(new KeyServiceLocator<TKey, TService>(factoryMethod));
+		return services.AddSingleton<IServiceLocator<TKey, TService>>(new ServiceLocator<TKey, TService>(factoryMethod));
 	}
 
 	public static void MapStorageApi<TKey>(this IEndpointRouteBuilder app, Action<ApiConfiguration>? configureApi = null)

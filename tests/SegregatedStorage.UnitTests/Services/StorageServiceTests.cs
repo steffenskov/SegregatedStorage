@@ -4,13 +4,13 @@ namespace SegregatedStorage.UnitTests.Services;
 
 public class StorageServiceTests
 {
-	private readonly KeyServiceLocator<int, IFileRepository> _repositoryLocator;
+	private readonly ServiceLocator<int, IFileRepository> _repositoryLocator;
 	private readonly StorageService<int> _service;
 
 	public StorageServiceTests()
 	{
-		_repositoryLocator = new KeyServiceLocator<int, IFileRepository>(_ => new InMemoryFileRepository());
-		var storageProviderLocator = new KeyServiceLocator<int, IStorageProvider>(_ => new InMemoryStorageProvider());
+		_repositoryLocator = new ServiceLocator<int, IFileRepository>(_ => new InMemoryFileRepository());
+		var storageProviderLocator = new ServiceLocator<int, IStorageProvider>(_ => new InMemoryStorageProvider());
 		_service = new StorageService<int>(_repositoryLocator, storageProviderLocator);
 	}
 

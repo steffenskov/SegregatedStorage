@@ -83,7 +83,7 @@ public class SetupTests
 
 		// Assert
 		var provider = services.BuildServiceProvider();
-		var serviceLocator = provider.GetService<IKeyServiceLocator<int, IStorageProvider>>();
+		var serviceLocator = provider.GetService<IServiceLocator<int, IStorageProvider>>();
 
 		Assert.NotNull(serviceLocator);
 		var service = serviceLocator.GetService(42);
@@ -127,7 +127,7 @@ public class SetupTests
 
 		// Assert
 		var provider = services.BuildServiceProvider();
-		var serviceLocator = provider.GetService<IKeyServiceLocator<int, IFileRepository>>();
+		var serviceLocator = provider.GetService<IServiceLocator<int, IFileRepository>>();
 
 		Assert.NotNull(serviceLocator);
 		var service = serviceLocator.GetService(42);
