@@ -11,7 +11,7 @@ public class AzureSetupTests : BaseTests
 	}
 
 	[Fact]
-	public void AddAzureStorageProvider_DoesNotExist_IsAdded()
+	public async Task AddAzureStorageProvider_DoesNotExist_IsAdded()
 	{
 		// Arrange
 		var services = new ServiceCollection();
@@ -21,10 +21,10 @@ public class AzureSetupTests : BaseTests
 
 		// Assert
 		var provider = services.BuildServiceProvider();
-		var serviceLocator = provider.GetService<IServiceLocator<int, IStorageProvider>>();
+		var serviceLocator = provider.GetService<IAsyncServiceLocator<int, IStorageProvider>>();
 
 		Assert.NotNull(serviceLocator);
-		var service = serviceLocator.GetService(42);
+		var service = await serviceLocator.GetServiceAsync(42);
 		Assert.IsType<AzureStorageProvider>(service);
 	}
 }

@@ -22,12 +22,12 @@ public static class Setup
 	{
 		var mongoClient = new MongoClient(connectionString);
 
-		return services.AddKeyServiceLocator<TKey, IFileRepository>(key =>
+		return services.AddKeyServiceLocator<TKey, IFileRepository>((key, _) =>
 		{
 			var dbName = databaseNameFactory(key);
 			var db = mongoClient.GetDatabase(dbName);
 
-			return new MongoFileRepository(db, collectionName);
+			return ValueTask.FromResult<IFileRepository>(new MongoFileRepository(db, collectionName));
 		});
 	}
 
@@ -68,17 +68,16 @@ public static class Setup
 	/// </summary>
 	/// <param name="collectionName">Name of the collection to store metadata in</param>
 	/// <param name="databaseFactory">Factory method for creating a database instance for segregation</param>
-	/// <param name="guidRepresentation">How guids are serialized to MongoDB</param>
 	/// <typeparam name="TKey">Type of segregation key</typeparam>
 	public static IServiceCollection AddMongoFileRepository<TKey>(this IServiceCollection services, string collectionName,
 		Func<TKey, IMongoDatabase> databaseFactory)
 		where TKey : notnull
 	{
-		return services.AddKeyServiceLocator<TKey, IFileRepository>(key =>
+		return services.AddKeyServiceLocator<TKey, IFileRepository>((key, _) =>
 		{
 			var db = databaseFactory(key);
 
-			return new MongoFileRepository(db, collectionName);
+			return ValueTask.FromResult<IFileRepository>(new MongoFileRepository(db, collectionName));
 		});
 	}
 

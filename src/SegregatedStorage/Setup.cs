@@ -15,9 +15,12 @@ public static class Setup
 
 		var configuration = new StorageServiceConfiguration();
 		configureService?.Invoke(configuration);
-		
+
 		if (configuration.IncludeDeletionBackgroundService)
+		{
 			services.AddHostedService<DeletionBackgroundService<TKey>>();
+		}
+
 		return services.AddSingleton<IStorageService<TKey>, StorageService<TKey>>();
 	}
 
@@ -33,12 +36,20 @@ public static class Setup
 		return services.AddKeyServiceLocator<TKey, IFileRepository>(_ => new InMemoryFileRepository());
 	}
 
+	public static IServiceCollection AddKeyServiceLocator<TKey, TService>(this IServiceCollection services, Func<TKey, CancellationToken, ValueTask<TService>> factoryMethod)
+		where TKey : notnull
+	{
+		services.ThrowIfKeyServiceLocatorRegistered<TKey, TService>();
+
+		return services.AddSingleton<IAsyncServiceLocator<TKey, TService>>(new AsyncServiceLocator<TKey, TService>(factoryMethod));
+	}
+
 	public static IServiceCollection AddKeyServiceLocator<TKey, TService>(this IServiceCollection services, Func<TKey, TService> factoryMethod)
 		where TKey : notnull
 	{
 		services.ThrowIfKeyServiceLocatorRegistered<TKey, TService>();
 
-		return services.AddSingleton<IServiceLocator<TKey, TService>>(new ServiceLocator<TKey, TService>(factoryMethod));
+		return services.AddSingleton<IAsyncServiceLocator<TKey, TService>>(new AsyncServiceLocator<TKey, TService>(factoryMethod));
 	}
 
 	public static void MapStorageApi<TKey>(this IEndpointRouteBuilder app, Action<ApiConfiguration>? configureApi = null)
@@ -72,7 +83,9 @@ public static class Setup
 			}).Produces(StatusCodes.Status201Created);
 
 		if (configuration.DisableAntiForgery)
+		{
 			uploadMethod.DisableAntiforgery();
+		}
 
 		app.MapDelete($"/{configuration.EndpointPrefix}/{{key}}/{{id:guid}}", async (IStorageService<TKey> service, TKey key, Guid id, CancellationToken cancellationToken) =>
 			{

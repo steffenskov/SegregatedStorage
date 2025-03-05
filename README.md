@@ -13,6 +13,8 @@ better.
 
 For Azure Blob storage support, add this NuGet
 package: [SegregatedStorage.AzureStorageProvider](https://www.nuget.org/packages/SegregatedStorage.AzureStorageProvider)
+For Cosmos File repository support, add this NuGet
+package: [SegregatedStorage.CosmosFileRepository](https://www.nuget.org/packages/SegregatedStorage.CosmosFileRepository)
 For Mongo File repository support, add this NuGet
 package: [SegregatedStorage.MongoFileRepository](https://www.nuget.org/packages/SegregatedStorage.MongoFileRepository)
 
@@ -23,7 +25,10 @@ The type of key (here it's `int`), as well as the naming of collection, database
 prefer.
 
 ```
+builder.Services.AddCosmosFileRepository<int>("connectionString", "files", key => $"db-{key}");
+// OR
 builder.Services.AddMongoFileRepository<int>("connectionString", "files", key => $"db-{key}");
+
 builder.Services.AddAzureStorageProvider<int>("connectionString", key => $"container-{key}");
 builder.Services.AddStorageService<int>();
 ```

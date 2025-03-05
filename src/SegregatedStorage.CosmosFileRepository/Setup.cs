@@ -1,8 +1,6 @@
+using System.Net;
+using Microsoft.Azure.Cosmos;
 using Microsoft.Extensions.DependencyInjection;
-using MongoDB.Bson;
-using MongoDB.Bson.Serialization;
-using MongoDB.Bson.Serialization.Serializers;
-using MongoDB.Driver;
 using SegregatedStorage.Repositories;
 
 namespace SegregatedStorage;
@@ -10,129 +8,84 @@ namespace SegregatedStorage;
 public static class Setup
 {
 	/// <summary>
-	///     Add MongoDB based File Repository for storing metadata.
+	///     Add CosmosDB based File Repository for storing metadata.
 	/// </summary>
-	/// <param name="connectionString">Connectionstring for MongoDB</param>
-	/// <param name="collectionName">Name of the collection to store metadata in</param>
+	/// <param name="connectionString">Connectionstring for CosmosDB</param>
+	/// <param name="containerName">Name of the container to store metadata in</param>
 	/// <param name="databaseNameFactory">Factory method for creating database names for segregation</param>
 	/// <typeparam name="TKey">Type of segregation key</typeparam>
-	public static IServiceCollection AddMongoFileRepository<TKey>(this IServiceCollection services, string connectionString, string collectionName,
+	public static IServiceCollection AddCosmosFileRepository<TKey>(this IServiceCollection services, string connectionString, string containerName,
 		Func<TKey, string> databaseNameFactory)
 		where TKey : notnull
 	{
-		var mongoClient = new MongoClient(connectionString);
+		var client = new CosmosClient(connectionString);
 
-		return services.AddKeyServiceLocator<TKey, IFileRepository>(key =>
+		return services.AddKeyServiceLocator<TKey, IFileRepository>(async (key, cancellationToken) =>
 		{
 			var dbName = databaseNameFactory(key);
-			var db = mongoClient.GetDatabase(dbName);
+			var db = await CreateDatabaseAsync(client, dbName, cancellationToken);
+			var container = await CreateContainerAsync(db, containerName, cancellationToken);
 
-			return new MongoFileRepository(db, collectionName);
+			return new CosmosFileRepository(container);
 		});
 	}
 
 	/// <summary>
-	///     Add MongoDB based File Repository for storing metadata.
+	///     Add CosmosDB based File Repository for storing metadata.
 	/// </summary>
-	/// <param name="connectionString">Connectionstring for MongoDB</param>
-	/// <param name="collectionName">Name of the collection to store metadata in</param>
-	/// <param name="databaseNameFactory">Factory method for creating database names for segregation</param>
-	/// <param name="guidRepresentation">How guids are serialized to MongoDB</param>
+	/// <param name="containerName">Name of the container to store metadata in</param>
+	/// <param name="databaseFactory">Factory method for creating a database for segregation</param>
 	/// <typeparam name="TKey">Type of segregation key</typeparam>
-	public static IServiceCollection AddMongoFileRepository<TKey>(this IServiceCollection services, string connectionString, string collectionName,
-		Func<TKey, string> databaseNameFactory, GuidRepresentation guidRepresentation)
+	public static IServiceCollection AddCosmosFileRepository<TKey>(this IServiceCollection services, string containerName,
+		Func<TKey, CancellationToken, ValueTask<Database>> databaseFactory)
 		where TKey : notnull
 	{
-		RegisterGuidSerializer(guidRepresentation);
-		return AddMongoFileRepository(services, connectionString, collectionName, databaseNameFactory);
-	}
-
-	/// <summary>
-	///     Add MongoDB based File Repository for storing metadata.
-	/// </summary>
-	/// <param name="connectionString">Connectionstring for MongoDB</param>
-	/// <param name="collectionName">Name of the collection to store metadata in</param>
-	/// <param name="databaseNameFactory">Factory method for creating database names for segregation</param>
-	/// <param name="guidRepresentation">How guids are serialized to MongoDB</param>
-	/// <typeparam name="TKey">Type of segregation key</typeparam>
-	public static IServiceCollection AddMongoFileRepository<TKey>(this IServiceCollection services, string connectionString, string collectionName,
-		Func<TKey, string> databaseNameFactory, BsonType guidRepresentation)
-		where TKey : notnull
-	{
-		RegisterGuidSerializer(guidRepresentation);
-		return AddMongoFileRepository(services, connectionString, collectionName, databaseNameFactory);
-	}
-
-	/// <summary>
-	///     Add MongoDB based File Repository for storing metadata.
-	/// </summary>
-	/// <param name="collectionName">Name of the collection to store metadata in</param>
-	/// <param name="databaseFactory">Factory method for creating a database instance for segregation</param>
-	/// <param name="guidRepresentation">How guids are serialized to MongoDB</param>
-	/// <typeparam name="TKey">Type of segregation key</typeparam>
-	public static IServiceCollection AddMongoFileRepository<TKey>(this IServiceCollection services, string collectionName,
-		Func<TKey, IMongoDatabase> databaseFactory)
-		where TKey : notnull
-	{
-		return services.AddKeyServiceLocator<TKey, IFileRepository>(key =>
+		return services.AddKeyServiceLocator<TKey, IFileRepository>(async (key, cancellationToken) =>
 		{
-			var db = databaseFactory(key);
+			var db = await databaseFactory(key, cancellationToken);
+			var container = await CreateContainerAsync(db, containerName, cancellationToken);
 
-			return new MongoFileRepository(db, collectionName);
+			return new CosmosFileRepository(container);
 		});
 	}
 
 	/// <summary>
-	///     Add MongoDB based File Repository for storing metadata.
+	///     Add CosmosDB based File Repository for storing metadata.
 	/// </summary>
-	/// <param name="collectionName">Name of the collection to store metadata in</param>
-	/// <param name="databaseFactory">Factory method for creating a database instance for segregation</param>
-	/// <param name="guidRepresentation">How guids are serialized to MongoDB</param>
+	/// <param name="containerFactory">Factory method for creating a container for segregation</param>
 	/// <typeparam name="TKey">Type of segregation key</typeparam>
-	public static IServiceCollection AddMongoFileRepository<TKey>(this IServiceCollection services, string collectionName,
-		Func<TKey, IMongoDatabase> databaseFactory, GuidRepresentation guidRepresentation)
+	public static IServiceCollection AddCosmosFileRepository<TKey>(this IServiceCollection services, Func<TKey, CancellationToken, ValueTask<Container>> containerFactory)
 		where TKey : notnull
 	{
-		RegisterGuidSerializer(guidRepresentation);
-		return AddMongoFileRepository(services, collectionName, databaseFactory);
+		return services.AddKeyServiceLocator<TKey, IFileRepository>(async (key, cancellationToken) =>
+		{
+			var container = await containerFactory(key, cancellationToken);
+
+			return new CosmosFileRepository(container);
+		});
 	}
 
-	/// <summary>
-	///     Add MongoDB based File Repository for storing metadata.
-	/// </summary>
-	/// <param name="collectionName">Name of the collection to store metadata in</param>
-	/// <param name="databaseFactory">Factory method for creating a database instance for segregation</param>
-	/// <param name="guidRepresentation">How guids are serialized to MongoDB</param>
-	/// <typeparam name="TKey">Type of segregation key</typeparam>
-	public static IServiceCollection AddMongoFileRepository<TKey>(this IServiceCollection services, string collectionName,
-		Func<TKey, IMongoDatabase> databaseFactory, BsonType guidRepresentation)
-		where TKey : notnull
+	private static async Task<Database> CreateDatabaseAsync(CosmosClient client, string dbName, CancellationToken cancellationToken)
 	{
-		RegisterGuidSerializer(guidRepresentation);
-		return AddMongoFileRepository(services, collectionName, databaseFactory);
+		var dbResponse = await client.CreateDatabaseIfNotExistsAsync(dbName, cancellationToken: cancellationToken);
+		if (dbResponse.StatusCode != HttpStatusCode.OK && dbResponse.StatusCode != HttpStatusCode.Created)
+		{
+			throw new InvalidOperationException($"Failed to create database {dbName}");
+		}
+
+		var db = dbResponse.Database;
+		return db;
 	}
 
-	private static void RegisterGuidSerializer(GuidRepresentation guidRepresentation)
+	private static async Task<Container> CreateContainerAsync(Database db, string containerName, CancellationToken cancellationToken)
 	{
-		try
+		var containerResponse = await db.CreateContainerIfNotExistsAsync(new ContainerProperties(containerName, Consts.PartitionKey), cancellationToken: cancellationToken);
+		if (containerResponse.StatusCode != HttpStatusCode.OK && containerResponse.StatusCode != HttpStatusCode.Created)
 		{
-			BsonSerializer.RegisterSerializer(new GuidSerializer(guidRepresentation));
+			throw new InvalidOperationException($"Failed to create container {containerName}");
 		}
-		catch (BsonSerializationException)
-		{
-			// The above will throw if someone else already registered a Guid serializer for Mongo DB
-		}
-	}
 
-	private static void RegisterGuidSerializer(BsonType bsonType)
-	{
-		try
-		{
-			BsonSerializer.RegisterSerializer(new GuidSerializer(bsonType));
-		}
-		catch (BsonSerializationException)
-		{
-			// The above will throw if someone else already registered a Guid serializer for Mongo DB
-		}
+		var container = containerResponse.Container;
+		return container;
 	}
 }

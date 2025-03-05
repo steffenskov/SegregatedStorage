@@ -3,18 +3,18 @@ namespace SegregatedStorage.IntegrationTests.Repositories.Mongo;
 [Collection(nameof(ConfigurationCollection))]
 public class MongoFileRepositoryTests : BaseTests
 {
-	private readonly IServiceLocator<int, IFileRepository> _repositoryLocator;
+	private readonly IAsyncServiceLocator<int, IFileRepository> _repositoryLocator;
 
 	public MongoFileRepositoryTests(ContainerFixture fixture) : base(fixture)
 	{
-		_repositoryLocator = Provider.GetRequiredService<IServiceLocator<int, IFileRepository>>();
+		_repositoryLocator = Provider.GetRequiredService<IAsyncServiceLocator<int, IFileRepository>>();
 	}
 
 	[Fact]
 	public async Task PersistAsync_Valid_IsPersisted()
 	{
 		// Arrange
-		var repository = _repositoryLocator.GetService(42);
+		var repository = await _repositoryLocator.GetServiceAsync(42);
 		var file = StoredFile.Create(Guid.NewGuid(), "image.jpg", "image/jpg");
 
 		// Act
@@ -30,7 +30,7 @@ public class MongoFileRepositoryTests : BaseTests
 	public async Task PersistAsync_IdAlreadyExists_IsOverwritten()
 	{
 		// Arrange
-		var repository = _repositoryLocator.GetService(42);
+		var repository = await _repositoryLocator.GetServiceAsync(42);
 		var file = StoredFile.Create(Guid.NewGuid(), "image.jpg", "image/jpg");
 		await repository.PersistAsync(file);
 
@@ -49,7 +49,7 @@ public class MongoFileRepositoryTests : BaseTests
 	public async Task GetAsync_DoesNotExist_Throws()
 	{
 		// Arrange
-		var repository = _repositoryLocator.GetService(42);
+		var repository = await _repositoryLocator.GetServiceAsync(42);
 
 		// Act && Assert
 		await Assert.ThrowsAsync<FileNotFoundException>(async () => await repository.GetAsync(Guid.NewGuid()));
@@ -59,8 +59,8 @@ public class MongoFileRepositoryTests : BaseTests
 	public async Task GetAsync_ExistOnOtherKey_Throws()
 	{
 		// Arrange
-		var repository = _repositoryLocator.GetService(42);
-		var otherRepository = _repositoryLocator.GetService(43);
+		var repository = await _repositoryLocator.GetServiceAsync(42);
+		var otherRepository = await _repositoryLocator.GetServiceAsync(43);
 		var file = StoredFile.Create(Guid.NewGuid(), "image.jpg", "image/jpg");
 		await repository.PersistAsync(file);
 
@@ -72,7 +72,7 @@ public class MongoFileRepositoryTests : BaseTests
 	public async Task GetAsync_Exist_IsRetrieved()
 	{
 		// Arrange
-		var repository = _repositoryLocator.GetService(42);
+		var repository = await _repositoryLocator.GetServiceAsync(42);
 		var file = StoredFile.Create(Guid.NewGuid(), "image.jpg", "image/jpg");
 		await repository.PersistAsync(file);
 
@@ -87,7 +87,7 @@ public class MongoFileRepositoryTests : BaseTests
 	public async Task GetManyAsync_DoesNotExist_ReturnsEmpty()
 	{
 		// Arrange
-		var repository = _repositoryLocator.GetService(42);
+		var repository = await _repositoryLocator.GetServiceAsync(42);
 
 		// Act
 		var result = await repository.GetManyAsync([Guid.NewGuid(), Guid.NewGuid()]);
@@ -100,8 +100,8 @@ public class MongoFileRepositoryTests : BaseTests
 	public async Task GetManyAsync_ExistsOnOtherKey_ReturnsEmpty()
 	{
 		// Arrange
-		var repository = _repositoryLocator.GetService(42);
-		var otherRepository = _repositoryLocator.GetService(43);
+		var repository = await _repositoryLocator.GetServiceAsync(42);
+		var otherRepository = await _repositoryLocator.GetServiceAsync(43);
 		var file = StoredFile.Create(Guid.NewGuid(), "image.jpg", "image/jpg");
 		await repository.PersistAsync(file);
 
@@ -116,7 +116,7 @@ public class MongoFileRepositoryTests : BaseTests
 	public async Task GetManyAsync_SomeExist_AreReturned()
 	{
 		// Arrange
-		var repository = _repositoryLocator.GetService(42);
+		var repository = await _repositoryLocator.GetServiceAsync(42);
 		var file = StoredFile.Create(Guid.NewGuid(), "image.jpg", "image/jpg");
 		var file2 = StoredFile.Create(Guid.NewGuid(), "text.txt", "text/plain");
 		await repository.PersistAsync(file);
@@ -135,7 +135,7 @@ public class MongoFileRepositoryTests : BaseTests
 	public async Task DeleteAsync_Exist_IsDeleted()
 	{
 		// Arrange
-		var repository = _repositoryLocator.GetService(42);
+		var repository = await _repositoryLocator.GetServiceAsync(42);
 		var file = StoredFile.Create(Guid.NewGuid(), "image.jpg", "image/jpg");
 		await repository.PersistAsync(file);
 
@@ -151,7 +151,7 @@ public class MongoFileRepositoryTests : BaseTests
 	public async Task DeleteAsync_DoesNotExist_Throws()
 	{
 		// Arrange
-		var repository = _repositoryLocator.GetService(42);
+		var repository = await _repositoryLocator.GetServiceAsync(42);
 
 		// Act && Assert
 		await Assert.ThrowsAsync<FileNotFoundException>(async () => await repository.DeleteAsync(Guid.NewGuid()));
@@ -161,7 +161,7 @@ public class MongoFileRepositoryTests : BaseTests
 	public async Task GetForDeletionAsync_NoneExist_ReturnsEmptyCollection()
 	{
 		// Arrange
-		var repository = _repositoryLocator.GetService(42);
+		var repository = await _repositoryLocator.GetServiceAsync(42);
 
 		// Act
 		var files = await repository.GetForDeletionAsync();
@@ -174,7 +174,7 @@ public class MongoFileRepositoryTests : BaseTests
 	public async Task GetForDeletionAsync_SomeExist_ReturnsOnlyDeleted()
 	{
 		// Arrange
-		var repository = _repositoryLocator.GetService(42);
+		var repository = await _repositoryLocator.GetServiceAsync(42);
 		var file1 = StoredFile.Create(Guid.NewGuid(), "image.jpg", "image/jpg");
 		var file2 = StoredFile.Create(Guid.NewGuid(), "image.jpg", "image/jpg").Delete();
 		var file3 = StoredFile.Create(Guid.NewGuid(), "image.jpg", "image/jpg").Delete();

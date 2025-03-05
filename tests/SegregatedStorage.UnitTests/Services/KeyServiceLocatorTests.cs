@@ -1,34 +1,34 @@
 namespace SegregatedStorage.UnitTests.Services;
 
-public class ServiceLocatorTests
+public class AsyncServiceLocatorTests
 {
 	[Fact]
-	public void GetService_DoesNotExist_IsCreatedByFactory()
+	public async Task GetService_DoesNotExist_IsCreatedByFactory()
 	{
 		// Arrange
 		var created = false;
-		var locator = new ServiceLocator<int, string>(val =>
+		var locator = new AsyncServiceLocator<int, string>((val, _) =>
 		{
 			created = true;
-			return val.ToString();
+			return ValueTask.FromResult(val.ToString());
 		});
 
 		// Act
-		var service = locator.GetService(42);
+		await locator.GetServiceAsync(42);
 
 		// Assert
 		Assert.True(created);
 	}
 
 	[Fact]
-	public void GetService_Exists_ReturnsSameInstance()
+	public async Task GetService_Exists_ReturnsSameInstance()
 	{
 		// Arrange
-		var locator = new ServiceLocator<int, Service>(val => new Service());
+		var locator = new AsyncServiceLocator<int, Service>((val, _) => ValueTask.FromResult(new Service()));
 
 		// Act
-		var firstService = locator.GetService(42);
-		var secondService = locator.GetService(42);
+		var firstService = await locator.GetServiceAsync(42);
+		var secondService = await locator.GetServiceAsync(42);
 
 		// Assert
 		Assert.Same(firstService, secondService);
@@ -38,7 +38,7 @@ public class ServiceLocatorTests
 	public void GetServices_NoneCreated_ReturnsEmptyCollection()
 	{
 		// Arrange
-		var locator = new ServiceLocator<int, Service>(val => new Service());
+		var locator = new AsyncServiceLocator<int, Service>((val, _) => ValueTask.FromResult(new Service()));
 
 		// Act
 		var services = locator.GetServices();
@@ -48,12 +48,12 @@ public class ServiceLocatorTests
 	}
 
 	[Fact]
-	public void GetServices_SomeCreated_ReturnsThose()
+	public async Task GetServices_SomeCreated_ReturnsThose()
 	{
 		// Arrange
-		var locator = new ServiceLocator<int, Service>(val => new Service());
-		var service1 = locator.GetService(42);
-		var service2 = locator.GetService(1337);
+		var locator = new AsyncServiceLocator<int, Service>((val, _) => ValueTask.FromResult(new Service()));
+		var service1 = await locator.GetServiceAsync(42);
+		var service2 = await locator.GetServiceAsync(1337);
 
 		// Act
 		var services = locator.GetServices().ToList();
@@ -64,4 +64,4 @@ public class ServiceLocatorTests
 	}
 }
 
-file class Service();
+file class Service;

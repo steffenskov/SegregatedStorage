@@ -1,15 +1,13 @@
-using SegregatedStorage.Providers;
-
 namespace SegregatedStorage.IntegrationTests.Providers.Azure;
 
 [Collection(nameof(ConfigurationCollection))]
 public class AzureStorageProviderTests : BaseTests
 {
-	private readonly IServiceLocator<int, IStorageProvider> _providerLocator;
+	private readonly IAsyncServiceLocator<int, IStorageProvider> _providerLocator;
 
 	public AzureStorageProviderTests(ContainerFixture fixture) : base(fixture)
 	{
-		_providerLocator = Provider.GetRequiredService<IServiceLocator<int, IStorageProvider>>();
+		_providerLocator = Provider.GetRequiredService<IAsyncServiceLocator<int, IStorageProvider>>();
 	}
 
 	[Fact]
@@ -17,7 +15,7 @@ public class AzureStorageProviderTests : BaseTests
 	{
 		// Arrange
 		var filePath = Guid.NewGuid().ToString();
-		var provider = _providerLocator.GetService(42);
+		var provider = await _providerLocator.GetServiceAsync(42);
 		var bytes = "Hello world"u8.ToArray();
 		var stream = new MemoryStream(bytes);
 
@@ -39,7 +37,7 @@ public class AzureStorageProviderTests : BaseTests
 	{
 		// Arrange
 		var filePath = Guid.NewGuid().ToString();
-		var provider = _providerLocator.GetService(42);
+		var provider = await _providerLocator.GetServiceAsync(42);
 		var bytes = "Hello world"u8.ToArray();
 		var stream = new MemoryStream(bytes);
 		await provider.UploadAsync(filePath, stream);
@@ -47,7 +45,7 @@ public class AzureStorageProviderTests : BaseTests
 
 		// Act
 		var ex = await Record.ExceptionAsync(async () => await provider.UploadAsync(filePath, stream));
-		
+
 		// Assert
 		Assert.Null(ex);
 	}
@@ -57,7 +55,7 @@ public class AzureStorageProviderTests : BaseTests
 	{
 		// Arrange
 		var filePath = Guid.NewGuid().ToString();
-		var provider = _providerLocator.GetService(42);
+		var provider = await _providerLocator.GetServiceAsync(42);
 
 		// Act && Assert
 		await Assert.ThrowsAsync<FileNotFoundException>(async () => await provider.DeleteAsync(filePath));
@@ -68,7 +66,7 @@ public class AzureStorageProviderTests : BaseTests
 	{
 		// Arrange
 		var filePath = Guid.NewGuid().ToString();
-		var provider = _providerLocator.GetService(42);
+		var provider = await _providerLocator.GetServiceAsync(42);
 		var bytes = "Hello world"u8.ToArray();
 		var stream = new MemoryStream(bytes);
 		await provider.UploadAsync(filePath, stream);
@@ -86,7 +84,7 @@ public class AzureStorageProviderTests : BaseTests
 	{
 		// Arrange
 		var filePath = Guid.NewGuid().ToString();
-		var provider = _providerLocator.GetService(42);
+		var provider = await _providerLocator.GetServiceAsync(42);
 
 		// Act && Assert
 		await Assert.ThrowsAsync<FileNotFoundException>(async () => await provider.DownloadAsync(filePath));
@@ -97,7 +95,7 @@ public class AzureStorageProviderTests : BaseTests
 	{
 		// Arrange
 		var filePath = Guid.NewGuid().ToString();
-		var provider = _providerLocator.GetService(42);
+		var provider = await _providerLocator.GetServiceAsync(42);
 		var bytes = "Hello world"u8.ToArray();
 		var stream = new MemoryStream(bytes);
 		await provider.UploadAsync(filePath, stream);

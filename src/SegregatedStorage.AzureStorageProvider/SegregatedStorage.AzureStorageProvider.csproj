@@ -1,11 +1,11 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>net8.0</TargetFramework>
+        <TargetFramework>net9.0</TargetFramework>
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
         <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-        
+
         <Authors>Steffen Skov</Authors>
         <Company>Steffen Skov</Company>
         <Description>Extension to SegregatedStorage adding support for Azure Blob storage</Description>
@@ -23,7 +23,7 @@
         <ProjectReference Include="..\SegregatedStorage\SegregatedStorage.csproj"/>
     </ItemGroup>
     <ItemGroup>
-        <PackageReference Include="Azure.Storage.Blobs" Version="12.23.0" />
+        <PackageReference Include="Azure.Storage.Blobs" Version="12.23.0"/>
     </ItemGroup>
 
 </Project>

@@ -17,12 +17,16 @@ public static class Extensions
 	public static void ThrowIfRegistered<T>(this IServiceCollection services)
 	{
 		if (services.HasService<T>())
+		{
 			throw new InvalidOperationException($"An {typeof(T).Name} has already been injected into this IServiceCollection");
+		}
 	}
 
 	public static void ThrowIfKeyServiceLocatorRegistered<TKey, TService>(this IServiceCollection services)
 	{
-		if (services.HasService<IServiceLocator<TKey, TService>>())
+		if (services.HasService<IAsyncServiceLocator<TKey, TService>>())
+		{
 			throw new InvalidOperationException($"An IKeyServiceLocator<{typeof(TKey).Name}, {typeof(TService).Name}> has already been injected into this IServiceCollection");
+		}
 	}
 }

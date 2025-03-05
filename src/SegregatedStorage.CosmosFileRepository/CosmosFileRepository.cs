@@ -8,12 +8,12 @@ namespace SegregatedStorage;
 
 internal class CosmosFileRepository : IFileRepository
 {
-	private static readonly PartitionKey _partitionKey = new($"/{nameof(StoredFile.State).ToLower()}");
+	private static readonly PartitionKey _partitionKey = new(Consts.PartitionKey);
 	private readonly Container _container;
 
-	public CosmosFileRepository(CosmosClient client, string databaseId, string containerId)
+	public CosmosFileRepository(Container container)
 	{
-		_container = client.GetContainer(databaseId, containerId);
+		_container = container;
 	}
 
 	public async ValueTask PersistAsync(StoredFile storedFile, CancellationToken cancellationToken = default)
@@ -46,7 +46,7 @@ internal class CosmosFileRepository : IFileRepository
 	{
 		try
 		{
-			await _container.DeleteItemAsync<StoredFile>(id.ToString(), new PartitionKey("/id"), cancellationToken: cancellationToken);
+			await _container.DeleteItemAsync<StoredFile>(id.ToString(), _partitionKey, cancellationToken: cancellationToken);
 		}
 		catch (CosmosException ex) when (ex.StatusCode == HttpStatusCode.NotFound)
 		{

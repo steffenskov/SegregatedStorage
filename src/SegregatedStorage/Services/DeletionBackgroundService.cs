@@ -5,10 +5,10 @@ namespace SegregatedStorage.Services;
 internal class DeletionBackgroundService<TKey> : BackgroundService
 	where TKey : notnull
 {
-	private readonly IServiceLocator<TKey, IFileRepository> _repositoryLocator;
-	private readonly IServiceLocator<TKey, IStorageProvider> _storageProviderLocator;
+	private readonly IAsyncServiceLocator<TKey, IFileRepository> _repositoryLocator;
+	private readonly IAsyncServiceLocator<TKey, IStorageProvider> _storageProviderLocator;
 
-	public DeletionBackgroundService(IServiceLocator<TKey, IFileRepository> repositoryLocator, IServiceLocator<TKey, IStorageProvider> storageProviderLocator)
+	public DeletionBackgroundService(IAsyncServiceLocator<TKey, IFileRepository> repositoryLocator, IAsyncServiceLocator<TKey, IStorageProvider> storageProviderLocator)
 	{
 		_repositoryLocator = repositoryLocator;
 		_storageProviderLocator = storageProviderLocator;
@@ -49,7 +49,7 @@ internal class DeletionBackgroundService<TKey> : BackgroundService
 
 	private async Task<bool> DeleteFromStorageProviderAsync(TKey key, StoredFile storedFile, CancellationToken cancellationToken)
 	{
-		var storageProvider = _storageProviderLocator.GetService(key);
+		var storageProvider = await _storageProviderLocator.GetServiceAsync(key, cancellationToken);
 		try
 		{
 			await storageProvider.DeleteAsync(FilePathGenerator.GenerateFilePath(storedFile.Id), cancellationToken);

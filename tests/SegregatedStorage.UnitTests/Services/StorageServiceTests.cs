@@ -4,13 +4,13 @@ namespace SegregatedStorage.UnitTests.Services;
 
 public class StorageServiceTests
 {
-	private readonly ServiceLocator<int, IFileRepository> _repositoryLocator;
+	private readonly AsyncServiceLocator<int, IFileRepository> _repositoryLocator;
 	private readonly StorageService<int> _service;
 
 	public StorageServiceTests()
 	{
-		_repositoryLocator = new ServiceLocator<int, IFileRepository>(_ => new InMemoryFileRepository());
-		var storageProviderLocator = new ServiceLocator<int, IStorageProvider>(_ => new InMemoryStorageProvider());
+		_repositoryLocator = new AsyncServiceLocator<int, IFileRepository>(_ => new InMemoryFileRepository());
+		var storageProviderLocator = new AsyncServiceLocator<int, IStorageProvider>(_ => new InMemoryStorageProvider());
 		_service = new StorageService<int>(_repositoryLocator, storageProviderLocator);
 	}
 
@@ -74,7 +74,7 @@ public class StorageServiceTests
 	{
 		// Arrange
 		var file = StoredFile.Create(Guid.NewGuid(), "hello.txt", "text/plain").Delete();
-		await _repositoryLocator.GetService(42).PersistAsync(file);
+		await (await _repositoryLocator.GetServiceAsync(42)).PersistAsync(file);
 
 		// Act && Assert
 		await Assert.ThrowsAsync<FileNotFoundException>(async () => await _service.DownloadAsync(42, file.Id));
@@ -85,7 +85,7 @@ public class StorageServiceTests
 	{
 		// Arrange
 		var file = StoredFile.Create(Guid.NewGuid(), "hello.txt", "text/plain");
-		await _repositoryLocator.GetService(42).PersistAsync(file);
+		await (await _repositoryLocator.GetServiceAsync(42)).PersistAsync(file);
 
 		// Act && Assert
 		await Assert.ThrowsAsync<InvalidOperationException>(async () => await _service.DownloadAsync(42, file.Id));
@@ -124,7 +124,7 @@ public class StorageServiceTests
 	{
 		// Arrange
 		var file = StoredFile.Create(Guid.NewGuid(), "hello.txt", "text/plain").Delete();
-		await _repositoryLocator.GetService(42).PersistAsync(file);
+		await (await _repositoryLocator.GetServiceAsync(42)).PersistAsync(file);
 
 		// Act && Assert
 		await Assert.ThrowsAsync<FileNotFoundException>(async () => await _service.DeleteAsync(42, file.Id));
@@ -157,7 +157,7 @@ public class StorageServiceTests
 	{
 		// Arrange
 		var file = StoredFile.Create(Guid.NewGuid(), "hello.txt", "text/plain").Delete();
-		await _repositoryLocator.GetService(42).PersistAsync(file);
+		await (await _repositoryLocator.GetServiceAsync(42)).PersistAsync(file);
 
 		// Act && Assert
 		await Assert.ThrowsAsync<FileNotFoundException>(async () => await _service.GetAsync(42, file.Id));
@@ -168,7 +168,7 @@ public class StorageServiceTests
 	{
 		// Arrange
 		var file = StoredFile.Create(Guid.NewGuid(), "hello.txt", "text/plain");
-		await _repositoryLocator.GetService(42).PersistAsync(file);
+		await (await _repositoryLocator.GetServiceAsync(42)).PersistAsync(file);
 
 		// Act
 		var fetched = await _service.GetAsync(42, file.Id);
@@ -207,7 +207,7 @@ public class StorageServiceTests
 	{
 		// Arrange
 		var file = StoredFile.Create(Guid.NewGuid(), "hello.txt", "text/plain").Delete();
-		await _repositoryLocator.GetService(42).PersistAsync(file);
+		await (await _repositoryLocator.GetServiceAsync(42)).PersistAsync(file);
 
 		// Act
 		var result = await _service.GetManyAsync(42, [file.Id]);
@@ -221,7 +221,7 @@ public class StorageServiceTests
 	{
 		// Arrange
 		var file = StoredFile.Create(Guid.NewGuid(), "hello.txt", "text/plain");
-		await _repositoryLocator.GetService(42).PersistAsync(file);
+		await (await _repositoryLocator.GetServiceAsync(42)).PersistAsync(file);
 
 
 		// Act
@@ -239,7 +239,7 @@ public class StorageServiceTests
 		var ms = new MemoryStream(bytes);
 		var file = await _service.UploadAsync(42, "hello.txt", "text/plain", ms);
 		var file2 = StoredFile.Create(Guid.NewGuid(), "hello.txt", "text/plain");
-		await _repositoryLocator.GetService(42).PersistAsync(file2);
+		await (await _repositoryLocator.GetServiceAsync(42)).PersistAsync(file2);
 
 		// Act
 		var result = await _service.GetManyAsync(42, [file.Id, file2.Id]);
@@ -261,7 +261,7 @@ public class StorageServiceTests
 	{
 		// Arrange
 		var file = StoredFile.Create(Guid.NewGuid(), "hello.txt", "text/plain").Delete();
-		await _repositoryLocator.GetService(42).PersistAsync(file);
+		await (await _repositoryLocator.GetServiceAsync(42)).PersistAsync(file);
 
 		// Act && Assert
 		await Assert.ThrowsAsync<FileNotFoundException>(async () => await _service.RenameAsync(42, file.Id, "world.txt"));
@@ -274,7 +274,7 @@ public class StorageServiceTests
 		var bytes = "Hello world"u8.ToArray();
 		var ms = new MemoryStream(bytes);
 		var file = await _service.UploadAsync(42, "hello.txt", "text/plain", ms);
-		var repository = _repositoryLocator.GetService(42);
+		var repository = await _repositoryLocator.GetServiceAsync(42);
 		await repository.PersistAsync(file);
 
 		// Act && Assert
@@ -290,7 +290,7 @@ public class StorageServiceTests
 		var bytes = "Hello world"u8.ToArray();
 		var ms = new MemoryStream(bytes);
 		var file = await _service.UploadAsync(42, "hello.txt", "text/plain", ms);
-		var repository = _repositoryLocator.GetService(42);
+		var repository = await _repositoryLocator.GetServiceAsync(42);
 		await repository.PersistAsync(file);
 
 		// Act
@@ -309,7 +309,7 @@ public class StorageServiceTests
 		var bytes = "Hello world"u8.ToArray();
 		var ms = new MemoryStream(bytes);
 		var file = await _service.UploadAsync(42, "hello.txt", "text/plain", ms);
-		var repository = _repositoryLocator.GetService(42);
+		var repository = await _repositoryLocator.GetServiceAsync(42);
 		await repository.PersistAsync(file);
 
 		// Act
