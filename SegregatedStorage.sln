@@ -22,6 +22,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		Directory.Build.props = Directory.Build.props
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SegregatedStorage.CosmosFileRepository", "src\SegregatedStorage.CosmosFileRepository\SegregatedStorage.CosmosFileRepository.csproj", "{11626670-C652-4732-96C3-E8F446934145}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -52,6 +54,10 @@ Global
 		{156BE34E-11C9-4C40-B2A7-DE254375F99B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{156BE34E-11C9-4C40-B2A7-DE254375F99B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{156BE34E-11C9-4C40-B2A7-DE254375F99B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{11626670-C652-4732-96C3-E8F446934145}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{11626670-C652-4732-96C3-E8F446934145}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{11626670-C652-4732-96C3-E8F446934145}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{11626670-C652-4732-96C3-E8F446934145}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{336CEC81-752C-4E3E-A343-0F3CCF48884C} = {C13B1F7F-F968-4B4A-9057-AFA81F08825C}
@@ -60,5 +66,6 @@ Global
 		{A1A7C097-A942-471A-A63C-A6BD0EC1203F} = {C13B1F7F-F968-4B4A-9057-AFA81F08825C}
 		{47463665-4302-426D-BDCF-A8F6E0BA44AF} = {5A602E2C-1936-4FC6-B665-968E88CD4880}
 		{156BE34E-11C9-4C40-B2A7-DE254375F99B} = {C13B1F7F-F968-4B4A-9057-AFA81F08825C}
+		{11626670-C652-4732-96C3-E8F446934145} = {C13B1F7F-F968-4B4A-9057-AFA81F08825C}
 	EndGlobalSection
 EndGlobal
