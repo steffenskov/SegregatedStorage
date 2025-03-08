@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
 
     <PropertyGroup>
-        <TargetFramework>net8.0</TargetFramework>
+        <TargetFramework>net9.0</TargetFramework>
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
         <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
@@ -9,12 +9,12 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.13"/>
-        <PackageReference Include="Swashbuckle.AspNetCore" Version="7.3.1" />
+        <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.2"/>
+        <PackageReference Include="Swashbuckle.AspNetCore" Version="7.3.1"/>
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\SegregatedStorage\SegregatedStorage.csproj" />
+        <ProjectReference Include="..\SegregatedStorage\SegregatedStorage.csproj"/>
     </ItemGroup>
 
 </Project>

@@ -1,0 +1,31 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net9.0</TargetFramework>
+        <Nullable>enable</Nullable>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+
+        <Authors>Steffen Skov</Authors>
+        <Company>Steffen Skov</Company>
+        <Description>Extension to SegregatedStorage adding support for MongoDB for storing metadata</Description>
+        <Copyright>Steffen Skov 2024</Copyright>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+        <PackageProjectUrl>https://github.com/steffenskov/SegregatedStorage.MongoFileRepository</PackageProjectUrl>
+        <PackageTags>storage, segregation</PackageTags>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+        <RootNamespace>SegregatedStorage</RootNamespace>
+    </PropertyGroup>
+    <ItemGroup>
+        <None Include="../../../README.md" Pack="true" PackagePath="\"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="MongoDB.Driver" Version="3.2.1"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\..\SegregatedStorage\SegregatedStorage.csproj" />
+    </ItemGroup>
+
+</Project>

@@ -3,10 +3,10 @@ namespace SegregatedStorage.Services;
 internal class StorageService<TKey> : IStorageService<TKey>
 	where TKey : notnull
 {
-	private readonly IServiceLocator<TKey, IFileRepository> _repositoryLocator;
-	private readonly IServiceLocator<TKey, IStorageProvider> _storageProviderLocator;
+	private readonly IAsyncServiceLocator<TKey, IFileRepository> _repositoryLocator;
+	private readonly IAsyncServiceLocator<TKey, IStorageProvider> _storageProviderLocator;
 
-	public StorageService(IServiceLocator<TKey, IFileRepository> repositoryLocator, IServiceLocator<TKey, IStorageProvider> storageProviderLocator)
+	public StorageService(IAsyncServiceLocator<TKey, IFileRepository> repositoryLocator, IAsyncServiceLocator<TKey, IStorageProvider> storageProviderLocator)
 	{
 		_storageProviderLocator = storageProviderLocator;
 		_repositoryLocator = repositoryLocator;
@@ -20,8 +20,8 @@ internal class StorageService<TKey> : IStorageService<TKey>
 
 	public async ValueTask<StoredFile> UploadAsync(TKey key, Guid id, string filename, string mimeType, Stream data, CancellationToken cancellationToken = default)
 	{
-		var repository = _repositoryLocator.GetService(key);
-		var storageProvider = _storageProviderLocator.GetService(key);
+		var repository = await _repositoryLocator.GetServiceAsync(key, cancellationToken);
+		var storageProvider = await _storageProviderLocator.GetServiceAsync(key, cancellationToken);
 		var file = StoredFile.Create(id, filename, mimeType);
 		await repository.PersistAsync(file, cancellationToken);
 
@@ -41,8 +41,8 @@ internal class StorageService<TKey> : IStorageService<TKey>
 
 	public async ValueTask<(StoredFile File, Stream Data)> DownloadAsync(TKey key, Guid id, CancellationToken cancellationToken = default)
 	{
-		var repository = _repositoryLocator.GetService(key);
-		var storageProvider = _storageProviderLocator.GetService(key);
+		var repository = await _repositoryLocator.GetServiceAsync(key, cancellationToken);
+		var storageProvider = await _storageProviderLocator.GetServiceAsync(key, cancellationToken);
 		var file = await repository.GetAsync(id, cancellationToken);
 
 		if (file is null || file.State == FileState.Deleting)
@@ -62,7 +62,7 @@ internal class StorageService<TKey> : IStorageService<TKey>
 
 	public async ValueTask DeleteAsync(TKey key, Guid id, CancellationToken cancellationToken = default)
 	{
-		var repository = _repositoryLocator.GetService(key);
+		var repository = await _repositoryLocator.GetServiceAsync(key, cancellationToken);
 		var file = await repository.GetAsync(id, cancellationToken);
 		if (file is null || file.State == FileState.Deleting)
 		{
@@ -75,7 +75,7 @@ internal class StorageService<TKey> : IStorageService<TKey>
 
 	public async ValueTask<IDictionary<Guid, StoredFile>> GetManyAsync(TKey key, IEnumerable<Guid> ids, CancellationToken cancellationToken = default)
 	{
-		var repository = _repositoryLocator.GetService(key);
+		var repository = await _repositoryLocator.GetServiceAsync(key, cancellationToken);
 		var result = await repository.GetManyAsync(ids, cancellationToken);
 		return result.Where(file => file.State != FileState.Deleting)
 			.ToDictionary(file => file.Id, file => file);
@@ -83,7 +83,7 @@ internal class StorageService<TKey> : IStorageService<TKey>
 
 	public async ValueTask<StoredFile> GetAsync(TKey key, Guid id, CancellationToken cancellationToken = default)
 	{
-		var repository = _repositoryLocator.GetService(key);
+		var repository = await _repositoryLocator.GetServiceAsync(key, cancellationToken);
 		var file = await repository.GetAsync(id, cancellationToken);
 
 		if (file is null || file.State == FileState.Deleting)
@@ -96,7 +96,7 @@ internal class StorageService<TKey> : IStorageService<TKey>
 
 	public async ValueTask<StoredFile> RenameAsync(TKey key, Guid id, string filename, CancellationToken cancellationToken = default)
 	{
-		var repository = _repositoryLocator.GetService(key);
+		var repository = await _repositoryLocator.GetServiceAsync(key, cancellationToken);
 		var file = await repository.GetAsync(id, cancellationToken);
 
 		if (file is null || file.State == FileState.Deleting)

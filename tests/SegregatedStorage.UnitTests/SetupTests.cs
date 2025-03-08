@@ -71,9 +71,9 @@ public class SetupTests
 		Assert.IsType<StorageService<int>>(service);
 		Assert.Null(deletionService);
 	}
-	
+
 	[Fact]
-	public void AddInMemoryStorageProvider_NotRegistered_Registers()
+	public async Task AddInMemoryStorageProvider_NotRegistered_Registers()
 	{
 		// Arrange
 		var services = new ServiceCollection();
@@ -83,10 +83,10 @@ public class SetupTests
 
 		// Assert
 		var provider = services.BuildServiceProvider();
-		var serviceLocator = provider.GetService<IServiceLocator<int, IStorageProvider>>();
+		var serviceLocator = provider.GetService<IAsyncServiceLocator<int, IStorageProvider>>();
 
 		Assert.NotNull(serviceLocator);
-		var service = serviceLocator.GetService(42);
+		var service = await serviceLocator.GetServiceAsync(42);
 
 		Assert.IsType<InMemoryStorageProvider>(service);
 	}
@@ -117,7 +117,7 @@ public class SetupTests
 	}
 
 	[Fact]
-	public void AddInMemoryFileRepository_NotRegistered_Registers()
+	public async Task AddInMemoryFileRepository_NotRegistered_Registers()
 	{
 		// Arrange
 		var services = new ServiceCollection();
@@ -127,10 +127,10 @@ public class SetupTests
 
 		// Assert
 		var provider = services.BuildServiceProvider();
-		var serviceLocator = provider.GetService<IServiceLocator<int, IFileRepository>>();
+		var serviceLocator = provider.GetService<IAsyncServiceLocator<int, IFileRepository>>();
 
 		Assert.NotNull(serviceLocator);
-		var service = serviceLocator.GetService(42);
+		var service = await serviceLocator.GetServiceAsync(42);
 
 		Assert.IsType<InMemoryFileRepository>(service);
 	}

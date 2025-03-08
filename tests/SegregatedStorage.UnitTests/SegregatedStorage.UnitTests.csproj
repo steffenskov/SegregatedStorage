@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>net8.0</TargetFramework>
+        <TargetFramework>net9.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
@@ -10,16 +10,13 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="coverlet.collector" Version="6.0.4">
-          <PrivateAssets>all</PrivateAssets>
-          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-        </PackageReference>
-        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.13.0" />
+        <PackageReference Include="coverlet.collector" Version="6.0.4"/>
+        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.13.0"/>
         <PackageReference Include="NSubstitute" Version="5.3.0"/>
-        <PackageReference Include="xunit" Version="2.9.3" />
+        <PackageReference Include="xunit" Version="2.9.3"/>
         <PackageReference Include="xunit.runner.visualstudio" Version="3.0.2">
-          <PrivateAssets>all</PrivateAssets>
-          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
     </ItemGroup>
 
@@ -28,9 +25,13 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\..\src\SegregatedStorage.AzureStorageProvider\SegregatedStorage.AzureStorageProvider.csproj"/>
-        <ProjectReference Include="..\..\src\SegregatedStorage.MongoFileRepository\SegregatedStorage.MongoFileRepository.csproj"/>
         <ProjectReference Include="..\..\src\SegregatedStorage\SegregatedStorage.csproj"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <Reference Include="Microsoft.Azure.Cosmos.Client">
+            <HintPath>..\..\..\..\..\..\.nuget\packages\microsoft.azure.cosmos\3.47.2\lib\netstandard2.0\Microsoft.Azure.Cosmos.Client.dll</HintPath>
+        </Reference>
     </ItemGroup>
 
 </Project>
