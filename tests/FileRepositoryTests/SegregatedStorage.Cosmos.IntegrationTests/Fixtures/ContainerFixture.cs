@@ -11,7 +11,7 @@ public class ContainerFixture : IAsyncLifetime
 	{
 		_cosmosContainer = new CosmosDbBuilder()
 			.WithImage("mcr.microsoft.com/cosmosdb/linux/azure-cosmos-emulator:vnext-preview")
-			.WithWaitStrategy(Wait.ForUnixContainer().UntilPortIsAvailable(8081))
+			.WithWaitStrategy(Wait.ForUnixContainer().UntilMessageIsLogged("Emulator is accessible"))
 			.Build();
 	}
 
@@ -22,7 +22,6 @@ public class ContainerFixture : IAsyncLifetime
 	public async Task InitializeAsync()
 	{
 		await _cosmosContainer.StartAsync();
-		await Task.Delay(2000);
 		var services = new ServiceCollection();
 		services.AddCosmosFileRepository<int>(ConnectionString, "files", customerId => $"db-{customerId}");
 		Provider = services.BuildServiceProvider();
