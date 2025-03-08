@@ -10,8 +10,9 @@ concurrency:
 
 env:
   PROJECT_PATH: 'src/SegregatedStorage/SegregatedStorage.csproj'
-  AZURE_PROJECT_PATH: 'src/SegregatedStorage.AzureStorageProvider/SegregatedStorage.AzureStorageProvider.csproj'
-  MONGO_PROJECT_PATH: 'src/SegregatedStorage.MongoFileRepository/SegregatedStorage.MongoFileRepository.csproj'
+  AZURE_PROJECT_PATH: 'src/StorageProviders/SegregatedStorage.AzureStorageProvider/SegregatedStorage.AzureStorageProvider.csproj'
+  COSMOS_PROJECT_PATH: 'src/FileRepositories/SegregatedStorage.CosmosFileRepository/SegregatedStorage.CosmosFileRepository.csproj'
+  MONGO_PROJECT_PATH: 'src/FileRepositories/SegregatedStorage.MongoFileRepository/SegregatedStorage.MongoFileRepository.csproj'
   SOLUTION_PATH: 'SegregatedStorage.sln'
   PACKAGE_OUTPUT_DIRECTORY: ${{ github.workspace }}/output
   NUGET_SOURCE_URL: 'https://api.nuget.org/v3/index.json'
@@ -28,7 +29,7 @@ jobs:
     - name: 'Install dotnet'
       uses: actions/setup-dotnet@v4
       with:
-        dotnet-version: 8.0.x
+        dotnet-version: 9.0.x
 
     - name: 'Restore packages'
       run: dotnet restore ${{ env.SOLUTION_PATH }}
@@ -47,7 +48,7 @@ jobs:
     - name: 'Install dotnet'
       uses: actions/setup-dotnet@v4
       with:
-        dotnet-version: 8.0.x
+        dotnet-version: 9.0.x
 
     - name: 'Restore packages'
       run: dotnet restore ${{ env.SOLUTION_PATH }}
@@ -60,6 +61,9 @@ jobs:
 
     - name: 'Pack Azure extension'
       run: dotnet pack ${{ env.AZURE_PROJECT_PATH }} --no-restore --no-build --configuration Release --include-symbols -p:SymbolPackageFormat=snupkg --output ${{ env.PACKAGE_OUTPUT_DIRECTORY }}
+
+    - name: 'Pack Cosmos extension'
+      run: dotnet pack ${{ env.COSMOS_PROJECT_PATH }} --no-restore --no-build --configuration Release --include-symbols -p:SymbolPackageFormat=snupkg --output ${{ env.PACKAGE_OUTPUT_DIRECTORY }}
 
     - name: 'Pack Mongo extension'
       run: dotnet pack ${{ env.MONGO_PROJECT_PATH }} --no-restore --no-build --configuration Release --include-symbols -p:SymbolPackageFormat=snupkg --output ${{ env.PACKAGE_OUTPUT_DIRECTORY }}

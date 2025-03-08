@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
         <TargetFramework>net9.0</TargetFramework>
@@ -12,9 +12,8 @@
     <ItemGroup>
         <PackageReference Include="coverlet.collector" Version="6.0.4"/>
         <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.13.0"/>
-        <PackageReference Include="NSubstitute" Version="5.3.0"/>
+        <PackageReference Include="Testcontainers.CosmosDb" Version="4.3.0"/>
         <PackageReference Include="xunit" Version="2.9.3"/>
-
     </ItemGroup>
 
     <ItemGroup>
@@ -22,13 +21,8 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\..\src\SegregatedStorage\SegregatedStorage.csproj"/>
-    </ItemGroup>
-
-    <ItemGroup>
-        <Reference Include="Microsoft.Azure.Cosmos.Client">
-            <HintPath>..\..\..\..\..\..\.nuget\packages\microsoft.azure.cosmos\3.47.2\lib\netstandard2.0\Microsoft.Azure.Cosmos.Client.dll</HintPath>
-        </Reference>
+        <ProjectReference Include="..\..\..\src\FileRepositories\SegregatedStorage.CosmosFileRepository\SegregatedStorage.CosmosFileRepository.csproj" />
+        <ProjectReference Include="..\SegregatedStorage.FileRepository.IntegrationTests\SegregatedStorage.FileRepository.IntegrationTests.csproj"/>
     </ItemGroup>
 
 </Project>
