@@ -25,7 +25,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\..\SegregatedStorage\SegregatedStorage.csproj" />
+        <ProjectReference Include="..\..\SegregatedStorage\SegregatedStorage.csproj" />
     </ItemGroup>
 
 </Project>
