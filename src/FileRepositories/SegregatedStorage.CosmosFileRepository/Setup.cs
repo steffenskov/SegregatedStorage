@@ -2,6 +2,7 @@ using System.Net;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Extensions.DependencyInjection;
 using SegregatedStorage.Repositories;
+using CosmosSerializer = SegregatedStorage.Serializers.CosmosSerializer;
 
 namespace SegregatedStorage;
 
@@ -79,7 +80,7 @@ public static class Setup
 
 	private static async Task<Container> CreateContainerAsync(Database db, string containerName, CancellationToken cancellationToken)
 	{
-		var containerResponse = await db.CreateContainerIfNotExistsAsync(new ContainerProperties(containerName, Consts.PartitionKey), cancellationToken: cancellationToken);
+		var containerResponse = await db.CreateContainerIfNotExistsAsync(new ContainerProperties(containerName, Consts.PartitionKeyPath), cancellationToken: cancellationToken);
 		if (containerResponse.StatusCode != HttpStatusCode.OK && containerResponse.StatusCode != HttpStatusCode.Created)
 		{
 			throw new InvalidOperationException($"Failed to create container {containerName}");
@@ -91,23 +92,26 @@ public static class Setup
 
 	private static CosmosClient CreateClient(string connectionString)
 	{
+		var options = new CosmosClientOptions
+		{
+			Serializer = new CosmosSerializer()
+		};
+
 		if (connectionString.Contains(Consts.EmulatorDefaultAccountKey))
 		{
-			return new CosmosClient(connectionString.Replace("https", "http"), new CosmosClientOptions
+			connectionString = connectionString.Replace("https", "http");
+			options.HttpClientFactory = () =>
 			{
-				HttpClientFactory = () =>
+				HttpMessageHandler httpMessageHandler = new HttpClientHandler
 				{
-					HttpMessageHandler httpMessageHandler = new HttpClientHandler
-					{
-						ServerCertificateCustomValidationCallback = (_, _, _, _) => true
-					};
-					return new HttpClient(httpMessageHandler);
-				},
-				ConnectionMode = ConnectionMode.Gateway,
-				LimitToEndpoint = true
-			});
+					ServerCertificateCustomValidationCallback = (_, _, _, _) => true
+				};
+				return new HttpClient(httpMessageHandler);
+			};
+			options.ConnectionMode = ConnectionMode.Gateway;
+			options.LimitToEndpoint = true;
 		}
 
-		return new CosmosClient(connectionString);
+		return new CosmosClient(connectionString, options);
 	}
 }

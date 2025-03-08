@@ -1,10 +1,9 @@
 ﻿using System.Net;
 using Microsoft.Azure.Cosmos;
 using SegregatedStorage.Aggregates;
-using SegregatedStorage.Repositories;
 using SegregatedStorage.ValueObjects;
 
-namespace SegregatedStorage;
+namespace SegregatedStorage.Repositories;
 
 internal class CosmosFileRepository : IFileRepository
 {
@@ -18,7 +17,9 @@ internal class CosmosFileRepository : IFileRepository
 
 	public async ValueTask PersistAsync(StoredFile storedFile, CancellationToken cancellationToken = default)
 	{
-		await _container.UpsertItemAsync(storedFile, _partitionKey, cancellationToken: cancellationToken);
+		ArgumentNullException.ThrowIfNull(storedFile);
+		var item = new CosmosStoredFile(storedFile);
+		await _container.UpsertItemAsync(item, cancellationToken: cancellationToken);
 	}
 
 	public async ValueTask<StoredFile> GetAsync(Guid id, CancellationToken cancellationToken = default)
@@ -36,8 +37,7 @@ internal class CosmosFileRepository : IFileRepository
 
 	public async ValueTask<IEnumerable<StoredFile>> GetManyAsync(IEnumerable<Guid> ids, CancellationToken cancellationToken = default)
 	{
-		var query = new QueryDefinition("SELECT * from c WHERE c.id IN (@ids)")
-			.WithParameter("@ids", ids.Select(id => id.ToString()));
+		var query = new QueryDefinition($"SELECT * from c WHERE c.id IN ({string.Join(", ", ids.Select(id => $"'{id}'"))})"); // Essentially SQL Injection, but with guids which are safe
 
 		return await QueryItemsAsync(query, cancellationToken);
 	}
@@ -57,7 +57,7 @@ internal class CosmosFileRepository : IFileRepository
 	public async ValueTask<IEnumerable<StoredFile>> GetForDeletionAsync(CancellationToken cancellationToken = default)
 	{
 		var query = new QueryDefinition("SELECT * FROM c WHERE c.state = @state")
-			.WithParameter("@state", FileState.Deleting.ToString());
+			.WithParameter("@state", FileState.Deleting);
 
 		return await QueryItemsAsync(query, cancellationToken);
 	}
