@@ -22,6 +22,7 @@ public class ContainerFixture : IAsyncLifetime
 	public async Task InitializeAsync()
 	{
 		await _cosmosContainer.StartAsync();
+		await Task.Delay(2000);
 		var services = new ServiceCollection();
 		services.AddCosmosFileRepository<int>(ConnectionString, "files", customerId => $"db-{customerId}");
 		Provider = services.BuildServiceProvider();
