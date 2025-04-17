@@ -164,7 +164,7 @@ public abstract class FileRepositoryTests
 	public async Task GetForDeletionAsync_NoneExist_ReturnsEmptyCollection()
 	{
 		// Arrange
-		var repository = await _repositoryLocator.GetServiceAsync(42, TestContext.Current.CancellationToken);
+		var repository = await _repositoryLocator.GetServiceAsync(Random.Shared.Next(), TestContext.Current.CancellationToken);
 
 		// Act
 		var files = await repository.GetForDeletionAsync(TestContext.Current.CancellationToken);
