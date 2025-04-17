@@ -29,8 +29,8 @@ public class DeletionBackgroundServiceTests
 		// Arrange
 		var getForDeletionCalled = false;
 		var repository = Substitute.For<IFileRepository>();
-		repository.When(rep => rep.GetForDeletionAsync()).Do(_ => { getForDeletionCalled = true; });
-		repository.GetForDeletionAsync().Returns(ValueTask.FromResult(Enumerable.Empty<StoredFile>()));
+		repository.When(rep => rep.GetForDeletionAsync(Arg.Any<CancellationToken>())).Do(_ => { getForDeletionCalled = true; });
+		repository.GetForDeletionAsync(Arg.Any<CancellationToken>()).Returns(ValueTask.FromResult(Enumerable.Empty<StoredFile>()));
 
 		var repositoryLocator = Substitute.For<IAsyncServiceLocator<int, IFileRepository>>();
 		repositoryLocator.GetServices().Returns([(42, repository)]);
@@ -55,12 +55,12 @@ public class DeletionBackgroundServiceTests
 		var repositoryDeleteCalled = new Dictionary<int, bool>();
 
 		var repository1 = Substitute.For<IFileRepository>();
-		repository1.GetForDeletionAsync().Returns([file]);
-		repository1.When(repo => repo.DeleteAsync(file.Id)).Do(_ => { repositoryDeleteCalled[key1] = true; });
+		repository1.GetForDeletionAsync(Arg.Any<CancellationToken>()).Returns([file]);
+		repository1.When(repo => repo.DeleteAsync(file.Id, Arg.Any<CancellationToken>())).Do(_ => { repositoryDeleteCalled[key1] = true; });
 
 		var repository2 = Substitute.For<IFileRepository>();
-		repository2.GetForDeletionAsync().Returns([file]);
-		repository2.When(repo => repo.DeleteAsync(file.Id)).Do(_ => { repositoryDeleteCalled[key2] = true; });
+		repository2.GetForDeletionAsync(Arg.Any<CancellationToken>()).Returns([file]);
+		repository2.When(repo => repo.DeleteAsync(file.Id, Arg.Any<CancellationToken>())).Do(_ => { repositoryDeleteCalled[key2] = true; });
 
 		var storageProvider1 = Substitute.For<IStorageProvider>();
 		storageProvider1.When(provider => provider.DeleteAsync(FilePathGenerator.GenerateFilePath(file.Id))).Do(_ => { storageProviderDeleteCalled[key1] = true; });

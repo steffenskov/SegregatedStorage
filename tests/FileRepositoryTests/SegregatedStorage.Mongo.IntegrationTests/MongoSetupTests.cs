@@ -24,7 +24,7 @@ public class MongoSetupTests
 		var serviceLocator = provider.GetService<IAsyncServiceLocator<int, IFileRepository>>();
 
 		Assert.NotNull(serviceLocator);
-		var service = await serviceLocator.GetServiceAsync(42);
+		var service = await serviceLocator.GetServiceAsync(42, TestContext.Current.CancellationToken);
 		Assert.IsType<MongoFileRepository>(service);
 	}
 }
