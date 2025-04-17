@@ -28,10 +28,4 @@
         <ProjectReference Include="..\..\src\SegregatedStorage\SegregatedStorage.csproj"/>
     </ItemGroup>
 
-    <ItemGroup>
-        <Reference Include="Microsoft.Azure.Cosmos.Client">
-            <HintPath>..\..\..\..\..\..\.nuget\packages\microsoft.azure.cosmos\3.47.2\lib\netstandard2.0\Microsoft.Azure.Cosmos.Client.dll</HintPath>
-        </Reference>
-    </ItemGroup>
-
 </Project>
