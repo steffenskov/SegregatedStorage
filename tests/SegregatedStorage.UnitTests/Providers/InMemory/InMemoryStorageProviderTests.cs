@@ -12,12 +12,12 @@ public class InMemoryStorageProviderTests
 		var stream = new MemoryStream(bytes);
 
 		// Act
-		await provider.UploadAsync(filePath, stream, TestContext.Current.CancellationToken);
+		await provider.UploadAsync(filePath, stream);
 
 		// Assert
-		var fetched = await provider.DownloadAsync(filePath, TestContext.Current.CancellationToken);
+		var fetched = await provider.DownloadAsync(filePath);
 		var ms = new MemoryStream();
-		await fetched.CopyToAsync(ms, TestContext.Current.CancellationToken);
+		await fetched.CopyToAsync(ms);
 		ms.Seek(0, SeekOrigin.Begin);
 		var fetchedBytes = ms.ToArray();
 
@@ -32,11 +32,11 @@ public class InMemoryStorageProviderTests
 		var provider = new InMemoryStorageProvider();
 		var bytes = "Hello world"u8.ToArray();
 		var stream = new MemoryStream(bytes);
-		await provider.UploadAsync(filePath, stream, TestContext.Current.CancellationToken);
+		await provider.UploadAsync(filePath, stream);
 		stream.Seek(0, SeekOrigin.Begin);
 
 		// Act && Assert
-		var ex = await Assert.ThrowsAsync<ArgumentException>(async () => await provider.UploadAsync(filePath, stream, TestContext.Current.CancellationToken));
+		var ex = await Assert.ThrowsAsync<ArgumentException>(async () => await provider.UploadAsync(filePath, stream));
 		Assert.Contains($"File already exists at path {filePath}", ex.Message);
 	}
 
@@ -48,7 +48,7 @@ public class InMemoryStorageProviderTests
 		var provider = new InMemoryStorageProvider();
 
 		// Act && Assert
-		await Assert.ThrowsAsync<FileNotFoundException>(async () => await provider.DeleteAsync(filePath, TestContext.Current.CancellationToken));
+		await Assert.ThrowsAsync<FileNotFoundException>(async () => await provider.DeleteAsync(filePath));
 	}
 
 	[Fact]
@@ -59,14 +59,14 @@ public class InMemoryStorageProviderTests
 		var provider = new InMemoryStorageProvider();
 		var bytes = "Hello world"u8.ToArray();
 		var stream = new MemoryStream(bytes);
-		await provider.UploadAsync(filePath, stream, TestContext.Current.CancellationToken);
+		await provider.UploadAsync(filePath, stream);
 
 		// Act
-		var ex = await Record.ExceptionAsync(async () => await provider.DeleteAsync(filePath, TestContext.Current.CancellationToken));
+		var ex = await Record.ExceptionAsync(async () => await provider.DeleteAsync(filePath));
 
 		// Assert
 		Assert.Null(ex);
-		await Assert.ThrowsAsync<FileNotFoundException>(async () => await provider.DownloadAsync(filePath, TestContext.Current.CancellationToken));
+		await Assert.ThrowsAsync<FileNotFoundException>(async () => await provider.DownloadAsync(filePath));
 	}
 
 	[Fact]
@@ -77,7 +77,7 @@ public class InMemoryStorageProviderTests
 		var provider = new InMemoryStorageProvider();
 
 		// Act && Assert
-		await Assert.ThrowsAsync<FileNotFoundException>(async () => await provider.DownloadAsync(filePath, TestContext.Current.CancellationToken));
+		await Assert.ThrowsAsync<FileNotFoundException>(async () => await provider.DownloadAsync(filePath));
 	}
 
 	[Fact]
@@ -88,14 +88,14 @@ public class InMemoryStorageProviderTests
 		var provider = new InMemoryStorageProvider();
 		var bytes = "Hello world"u8.ToArray();
 		var stream = new MemoryStream(bytes);
-		await provider.UploadAsync(filePath, stream, TestContext.Current.CancellationToken);
+		await provider.UploadAsync(filePath, stream);
 
 		// Act
-		var result = await provider.DownloadAsync(filePath, TestContext.Current.CancellationToken);
+		var result = await provider.DownloadAsync(filePath);
 
 		// Assert
 		using var ms = new MemoryStream();
-		await result.CopyToAsync(ms, TestContext.Current.CancellationToken);
+		await result.CopyToAsync(ms);
 		ms.Seek(0, SeekOrigin.Begin);
 		var fetchedBytes = ms.ToArray();
 

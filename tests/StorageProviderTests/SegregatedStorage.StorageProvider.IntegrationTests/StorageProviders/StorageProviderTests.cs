@@ -17,17 +17,17 @@ public abstract class StorageProviderTests
 	{
 		// Arrange
 		var filePath = Guid.NewGuid().ToString();
-		var provider = await _providerLocator.GetServiceAsync(42, TestContext.Current.CancellationToken);
+		var provider = await _providerLocator.GetServiceAsync(42);
 		var bytes = "Hello world"u8.ToArray();
 		var stream = new MemoryStream(bytes);
 
 		// Act
-		await provider.UploadAsync(filePath, stream, TestContext.Current.CancellationToken);
+		await provider.UploadAsync(filePath, stream);
 
 		// Assert
-		var fetched = await provider.DownloadAsync(filePath, TestContext.Current.CancellationToken);
+		var fetched = await provider.DownloadAsync(filePath);
 		var ms = new MemoryStream();
-		await fetched.CopyToAsync(ms, TestContext.Current.CancellationToken);
+		await fetched.CopyToAsync(ms);
 		ms.Seek(0, SeekOrigin.Begin);
 		var fetchedBytes = ms.ToArray();
 
@@ -39,14 +39,14 @@ public abstract class StorageProviderTests
 	{
 		// Arrange
 		var filePath = Guid.NewGuid().ToString();
-		var provider = await _providerLocator.GetServiceAsync(42, TestContext.Current.CancellationToken);
+		var provider = await _providerLocator.GetServiceAsync(42);
 		var bytes = "Hello world"u8.ToArray();
 		var stream = new MemoryStream(bytes);
-		await provider.UploadAsync(filePath, stream, TestContext.Current.CancellationToken);
+		await provider.UploadAsync(filePath, stream);
 		stream.Seek(0, SeekOrigin.Begin);
 
 		// Act
-		var ex = await Record.ExceptionAsync(async () => await provider.UploadAsync(filePath, stream, TestContext.Current.CancellationToken));
+		var ex = await Record.ExceptionAsync(async () => await provider.UploadAsync(filePath, stream));
 
 		// Assert
 		Assert.Null(ex);
@@ -57,10 +57,10 @@ public abstract class StorageProviderTests
 	{
 		// Arrange
 		var filePath = Guid.NewGuid().ToString();
-		var provider = await _providerLocator.GetServiceAsync(42, TestContext.Current.CancellationToken);
+		var provider = await _providerLocator.GetServiceAsync(42);
 
 		// Act && Assert
-		await Assert.ThrowsAsync<FileNotFoundException>(async () => await provider.DeleteAsync(filePath, TestContext.Current.CancellationToken));
+		await Assert.ThrowsAsync<FileNotFoundException>(async () => await provider.DeleteAsync(filePath));
 	}
 
 	[Fact]
@@ -68,17 +68,17 @@ public abstract class StorageProviderTests
 	{
 		// Arrange
 		var filePath = Guid.NewGuid().ToString();
-		var provider = await _providerLocator.GetServiceAsync(42, TestContext.Current.CancellationToken);
+		var provider = await _providerLocator.GetServiceAsync(42);
 		var bytes = "Hello world"u8.ToArray();
 		var stream = new MemoryStream(bytes);
-		await provider.UploadAsync(filePath, stream, TestContext.Current.CancellationToken);
+		await provider.UploadAsync(filePath, stream);
 
 		// Act
-		var ex = await Record.ExceptionAsync(async () => await provider.DeleteAsync(filePath, TestContext.Current.CancellationToken));
+		var ex = await Record.ExceptionAsync(async () => await provider.DeleteAsync(filePath));
 
 		// Assert
 		Assert.Null(ex);
-		await Assert.ThrowsAsync<FileNotFoundException>(async () => await provider.DownloadAsync(filePath, TestContext.Current.CancellationToken));
+		await Assert.ThrowsAsync<FileNotFoundException>(async () => await provider.DownloadAsync(filePath));
 	}
 
 	[Fact]
@@ -86,10 +86,10 @@ public abstract class StorageProviderTests
 	{
 		// Arrange
 		var filePath = Guid.NewGuid().ToString();
-		var provider = await _providerLocator.GetServiceAsync(42, TestContext.Current.CancellationToken);
+		var provider = await _providerLocator.GetServiceAsync(42);
 
 		// Act && Assert
-		await Assert.ThrowsAsync<FileNotFoundException>(async () => await provider.DownloadAsync(filePath, TestContext.Current.CancellationToken));
+		await Assert.ThrowsAsync<FileNotFoundException>(async () => await provider.DownloadAsync(filePath));
 	}
 
 	[Fact]
@@ -97,17 +97,17 @@ public abstract class StorageProviderTests
 	{
 		// Arrange
 		var filePath = Guid.NewGuid().ToString();
-		var provider = await _providerLocator.GetServiceAsync(42, TestContext.Current.CancellationToken);
+		var provider = await _providerLocator.GetServiceAsync(42);
 		var bytes = "Hello world"u8.ToArray();
 		var stream = new MemoryStream(bytes);
-		await provider.UploadAsync(filePath, stream, TestContext.Current.CancellationToken);
+		await provider.UploadAsync(filePath, stream);
 
 		// Act
-		var result = await provider.DownloadAsync(filePath, TestContext.Current.CancellationToken);
+		var result = await provider.DownloadAsync(filePath);
 
 		// Assert
 		using var ms = new MemoryStream();
-		await result.CopyToAsync(ms, TestContext.Current.CancellationToken);
+		await result.CopyToAsync(ms);
 		ms.Seek(0, SeekOrigin.Begin);
 		var fetchedBytes = ms.ToArray();
 

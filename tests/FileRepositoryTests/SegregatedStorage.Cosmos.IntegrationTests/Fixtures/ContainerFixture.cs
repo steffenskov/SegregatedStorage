@@ -19,7 +19,7 @@ public class ContainerFixture : IAsyncLifetime
 
 	public string ConnectionString => _cosmosContainer.GetConnectionString();
 
-	public async ValueTask InitializeAsync()
+	public async Task InitializeAsync()
 	{
 		await _cosmosContainer.StartAsync();
 		var services = new ServiceCollection();
@@ -27,7 +27,7 @@ public class ContainerFixture : IAsyncLifetime
 		Provider = services.BuildServiceProvider();
 	}
 
-	public async ValueTask DisposeAsync()
+	public async Task DisposeAsync()
 	{
 		await _cosmosContainer.DisposeAsync();
 	}

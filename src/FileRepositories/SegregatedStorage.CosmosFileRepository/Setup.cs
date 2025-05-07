@@ -11,7 +11,30 @@ public static class Setup
 	/// <summary>
 	///     Add CosmosDB based File Repository for storing metadata.
 	/// </summary>
-	/// <param name="connectionString">Connectionstring for CosmosDB</param>
+	/// <param name="connectionString">ConnectionString for CosmosDB</param>
+	/// <param name="containerNameFactory">Factory method for creating container names for segregation</param>
+	/// <param name="databaseName">Database name</param>
+	/// <typeparam name="TKey">Type of segregation key</typeparam>
+	public static IServiceCollection AddCosmosFileRepository<TKey>(this IServiceCollection services, string connectionString, Func<TKey, string> containerNameFactory,
+		string databaseName)
+		where TKey : notnull
+	{
+		var client = CreateClient(connectionString);
+
+		return services.AddKeyServiceLocator<TKey, IFileRepository>(async (key, cancellationToken) =>
+		{
+			var containerName = containerNameFactory(key);
+			var db = await CreateDatabaseAsync(client, databaseName, cancellationToken);
+			var container = await CreateContainerAsync(db, containerName, cancellationToken);
+
+			return new CosmosFileRepository(container);
+		});
+	}
+
+	/// <summary>
+	///     Add CosmosDB based File Repository for storing metadata.
+	/// </summary>
+	/// <param name="connectionString">ConnectionString for CosmosDB</param>
 	/// <param name="containerName">Name of the container to store metadata in</param>
 	/// <param name="databaseNameFactory">Factory method for creating database names for segregation</param>
 	/// <typeparam name="TKey">Type of segregation key</typeparam>

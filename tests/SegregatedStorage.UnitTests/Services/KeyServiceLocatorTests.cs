@@ -14,7 +14,7 @@ public class AsyncServiceLocatorTests
 		});
 
 		// Act
-		await locator.GetServiceAsync(42, TestContext.Current.CancellationToken);
+		await locator.GetServiceAsync(42);
 
 		// Assert
 		Assert.True(created);
@@ -27,8 +27,8 @@ public class AsyncServiceLocatorTests
 		var locator = new AsyncServiceLocator<int, Service>((val, _) => ValueTask.FromResult(new Service()));
 
 		// Act
-		var firstService = await locator.GetServiceAsync(42, TestContext.Current.CancellationToken);
-		var secondService = await locator.GetServiceAsync(42, TestContext.Current.CancellationToken);
+		var firstService = await locator.GetServiceAsync(42);
+		var secondService = await locator.GetServiceAsync(42);
 
 		// Assert
 		Assert.Same(firstService, secondService);
@@ -52,8 +52,8 @@ public class AsyncServiceLocatorTests
 	{
 		// Arrange
 		var locator = new AsyncServiceLocator<int, Service>((val, _) => ValueTask.FromResult(new Service()));
-		var service1 = await locator.GetServiceAsync(42, TestContext.Current.CancellationToken);
-		var service2 = await locator.GetServiceAsync(1337, TestContext.Current.CancellationToken);
+		var service1 = await locator.GetServiceAsync(42);
+		var service2 = await locator.GetServiceAsync(1337);
 
 		// Act
 		var services = locator.GetServices().ToList();

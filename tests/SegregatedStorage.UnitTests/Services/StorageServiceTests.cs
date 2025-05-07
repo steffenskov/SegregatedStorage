@@ -22,10 +22,10 @@ public class StorageServiceTests
 		var ms = new MemoryStream(bytes);
 
 		// Act
-		var uploadedFile = await _service.UploadAsync(42, "hello.txt", "text/plain", ms, TestContext.Current.CancellationToken);
+		var uploadedFile = await _service.UploadAsync(42, "hello.txt", "text/plain", ms);
 
 		// Assert
-		var (file, data) = await _service.DownloadAsync(42, uploadedFile.Id, TestContext.Current.CancellationToken);
+		var (file, data) = await _service.DownloadAsync(42, uploadedFile.Id);
 		Assert.NotNull(file);
 		Assert.NotNull(data);
 	}
@@ -39,10 +39,10 @@ public class StorageServiceTests
 
 		// Act
 		var id = Guid.NewGuid();
-		await _service.UploadAsync(42, id, "hello.txt", "text/plain", ms, TestContext.Current.CancellationToken);
+		await _service.UploadAsync(42, id, "hello.txt", "text/plain", ms);
 
 		// Assert
-		var (file, data) = await _service.DownloadAsync(42, id, TestContext.Current.CancellationToken);
+		var (file, data) = await _service.DownloadAsync(42, id);
 		Assert.NotNull(file);
 		Assert.NotNull(data);
 	}
@@ -53,10 +53,10 @@ public class StorageServiceTests
 		// Arrange
 		var bytes = "Hello world"u8.ToArray();
 		var ms = new MemoryStream(bytes);
-		var id = await _service.UploadAsync(42, "hello.txt", "text/plain", ms, TestContext.Current.CancellationToken);
+		var id = await _service.UploadAsync(42, "hello.txt", "text/plain", ms);
 
 		// Act
-		var id2 = await _service.UploadAsync(42, "hello.txt", "text/plain", ms, TestContext.Current.CancellationToken);
+		var id2 = await _service.UploadAsync(42, "hello.txt", "text/plain", ms);
 
 		// Assert
 		Assert.NotEqual(id, id2);
@@ -66,7 +66,7 @@ public class StorageServiceTests
 	public async Task DownloadAsync_DoesNotExist_Throws()
 	{
 		// Act && Assert
-		await Assert.ThrowsAsync<FileNotFoundException>(async () => await _service.DownloadAsync(42, Guid.NewGuid(), TestContext.Current.CancellationToken));
+		await Assert.ThrowsAsync<FileNotFoundException>(async () => await _service.DownloadAsync(42, Guid.NewGuid()));
 	}
 
 	[Fact]
@@ -74,10 +74,10 @@ public class StorageServiceTests
 	{
 		// Arrange
 		var file = StoredFile.Create(Guid.NewGuid(), "hello.txt", "text/plain").Delete();
-		await (await _repositoryLocator.GetServiceAsync(42, TestContext.Current.CancellationToken)).PersistAsync(file, TestContext.Current.CancellationToken);
+		await (await _repositoryLocator.GetServiceAsync(42)).PersistAsync(file);
 
 		// Act && Assert
-		await Assert.ThrowsAsync<FileNotFoundException>(async () => await _service.DownloadAsync(42, file.Id, TestContext.Current.CancellationToken));
+		await Assert.ThrowsAsync<FileNotFoundException>(async () => await _service.DownloadAsync(42, file.Id));
 	}
 
 	[Fact]
@@ -85,10 +85,10 @@ public class StorageServiceTests
 	{
 		// Arrange
 		var file = StoredFile.Create(Guid.NewGuid(), "hello.txt", "text/plain");
-		await (await _repositoryLocator.GetServiceAsync(42, TestContext.Current.CancellationToken)).PersistAsync(file, TestContext.Current.CancellationToken);
+		await (await _repositoryLocator.GetServiceAsync(42)).PersistAsync(file);
 
 		// Act && Assert
-		await Assert.ThrowsAsync<InvalidOperationException>(async () => await _service.DownloadAsync(42, file.Id, TestContext.Current.CancellationToken));
+		await Assert.ThrowsAsync<InvalidOperationException>(async () => await _service.DownloadAsync(42, file.Id));
 	}
 
 	[Fact]
@@ -97,17 +97,17 @@ public class StorageServiceTests
 		// Arrange
 		var bytes = "Hello world"u8.ToArray();
 		var ms = new MemoryStream(bytes);
-		var uploadedFile = await _service.UploadAsync(42, "hello.txt", "text/plain", ms, TestContext.Current.CancellationToken);
+		var uploadedFile = await _service.UploadAsync(42, "hello.txt", "text/plain", ms);
 
 		// Act
-		var (file, data) = await _service.DownloadAsync(42, uploadedFile.Id, TestContext.Current.CancellationToken);
+		var (file, data) = await _service.DownloadAsync(42, uploadedFile.Id);
 		Assert.Equal("hello.txt", file.FileName);
 		Assert.Equal("text/plain", file.MimeType);
 		Assert.Equal(FileState.Available, file.State);
 		Assert.Equal(uploadedFile, file);
 
 		using var ms2 = new MemoryStream();
-		await data.CopyToAsync(ms2, TestContext.Current.CancellationToken);
+		await data.CopyToAsync(ms2);
 		var fetchedBytes = ms2.ToArray();
 		Assert.True(bytes.SequenceEqual(fetchedBytes));
 	}
@@ -116,7 +116,7 @@ public class StorageServiceTests
 	public async Task DeleteAsync_DoesNotExist_Throws()
 	{
 		// Act && Assert
-		await Assert.ThrowsAsync<FileNotFoundException>(async () => await _service.DeleteAsync(42, Guid.NewGuid(), TestContext.Current.CancellationToken));
+		await Assert.ThrowsAsync<FileNotFoundException>(async () => await _service.DeleteAsync(42, Guid.NewGuid()));
 	}
 
 	[Fact]
@@ -124,10 +124,10 @@ public class StorageServiceTests
 	{
 		// Arrange
 		var file = StoredFile.Create(Guid.NewGuid(), "hello.txt", "text/plain").Delete();
-		await (await _repositoryLocator.GetServiceAsync(42, TestContext.Current.CancellationToken)).PersistAsync(file, TestContext.Current.CancellationToken);
+		await (await _repositoryLocator.GetServiceAsync(42)).PersistAsync(file);
 
 		// Act && Assert
-		await Assert.ThrowsAsync<FileNotFoundException>(async () => await _service.DeleteAsync(42, file.Id, TestContext.Current.CancellationToken));
+		await Assert.ThrowsAsync<FileNotFoundException>(async () => await _service.DeleteAsync(42, file.Id));
 	}
 
 	[Fact]
@@ -136,10 +136,10 @@ public class StorageServiceTests
 		// Arrange
 		var bytes = "Hello world"u8.ToArray();
 		var ms = new MemoryStream(bytes);
-		var uploadedFile = await _service.UploadAsync(42, "hello.txt", "text/plain", ms, TestContext.Current.CancellationToken);
+		var uploadedFile = await _service.UploadAsync(42, "hello.txt", "text/plain", ms);
 
 		// Act
-		var ex = await Record.ExceptionAsync(async () => await _service.DeleteAsync(42, uploadedFile.Id, TestContext.Current.CancellationToken));
+		var ex = await Record.ExceptionAsync(async () => await _service.DeleteAsync(42, uploadedFile.Id));
 
 		// Assert
 		Assert.Null(ex);
@@ -149,7 +149,7 @@ public class StorageServiceTests
 	public async Task GetAsync_DoesNotExist_Throws()
 	{
 		// Act && Assert
-		await Assert.ThrowsAsync<FileNotFoundException>(async () => await _service.GetAsync(42, Guid.NewGuid(), TestContext.Current.CancellationToken));
+		await Assert.ThrowsAsync<FileNotFoundException>(async () => await _service.GetAsync(42, Guid.NewGuid()));
 	}
 
 	[Fact]
@@ -157,10 +157,10 @@ public class StorageServiceTests
 	{
 		// Arrange
 		var file = StoredFile.Create(Guid.NewGuid(), "hello.txt", "text/plain").Delete();
-		await (await _repositoryLocator.GetServiceAsync(42, TestContext.Current.CancellationToken)).PersistAsync(file, TestContext.Current.CancellationToken);
+		await (await _repositoryLocator.GetServiceAsync(42)).PersistAsync(file);
 
 		// Act && Assert
-		await Assert.ThrowsAsync<FileNotFoundException>(async () => await _service.GetAsync(42, file.Id, TestContext.Current.CancellationToken));
+		await Assert.ThrowsAsync<FileNotFoundException>(async () => await _service.GetAsync(42, file.Id));
 	}
 
 	[Fact]
@@ -168,10 +168,10 @@ public class StorageServiceTests
 	{
 		// Arrange
 		var file = StoredFile.Create(Guid.NewGuid(), "hello.txt", "text/plain");
-		await (await _repositoryLocator.GetServiceAsync(42, TestContext.Current.CancellationToken)).PersistAsync(file, TestContext.Current.CancellationToken);
+		await (await _repositoryLocator.GetServiceAsync(42)).PersistAsync(file);
 
 		// Act
-		var fetched = await _service.GetAsync(42, file.Id, TestContext.Current.CancellationToken);
+		var fetched = await _service.GetAsync(42, file.Id);
 
 		// Assert
 		Assert.Equal(file, fetched);
@@ -183,10 +183,10 @@ public class StorageServiceTests
 		// Arrange
 		var bytes = "Hello world"u8.ToArray();
 		var ms = new MemoryStream(bytes);
-		var file = await _service.UploadAsync(42, "hello.txt", "text/plain", ms, TestContext.Current.CancellationToken);
+		var file = await _service.UploadAsync(42, "hello.txt", "text/plain", ms);
 
 		// Act
-		var fetched = await _service.GetAsync(42, file.Id, TestContext.Current.CancellationToken);
+		var fetched = await _service.GetAsync(42, file.Id);
 
 		// Assert
 		Assert.Equal(file, fetched);
@@ -196,7 +196,7 @@ public class StorageServiceTests
 	public async Task GetManyAsync_DoesNotExist_ReturnsEmpty()
 	{
 		// Act
-		var result = await _service.GetManyAsync(42, [Guid.NewGuid()], TestContext.Current.CancellationToken);
+		var result = await _service.GetManyAsync(42, [Guid.NewGuid()]);
 
 		// Assert
 		Assert.Empty(result);
@@ -207,10 +207,10 @@ public class StorageServiceTests
 	{
 		// Arrange
 		var file = StoredFile.Create(Guid.NewGuid(), "hello.txt", "text/plain").Delete();
-		await (await _repositoryLocator.GetServiceAsync(42, TestContext.Current.CancellationToken)).PersistAsync(file, TestContext.Current.CancellationToken);
+		await (await _repositoryLocator.GetServiceAsync(42)).PersistAsync(file);
 
 		// Act
-		var result = await _service.GetManyAsync(42, [file.Id], TestContext.Current.CancellationToken);
+		var result = await _service.GetManyAsync(42, [file.Id]);
 
 		// Assert
 		Assert.Empty(result);
@@ -221,11 +221,11 @@ public class StorageServiceTests
 	{
 		// Arrange
 		var file = StoredFile.Create(Guid.NewGuid(), "hello.txt", "text/plain");
-		await (await _repositoryLocator.GetServiceAsync(42, TestContext.Current.CancellationToken)).PersistAsync(file, TestContext.Current.CancellationToken);
+		await (await _repositoryLocator.GetServiceAsync(42)).PersistAsync(file);
 
 
 		// Act
-		var result = await _service.GetManyAsync(42, [file.Id], TestContext.Current.CancellationToken);
+		var result = await _service.GetManyAsync(42, [file.Id]);
 
 		// Assert
 		Assert.Contains(file, result.Values);
@@ -237,12 +237,12 @@ public class StorageServiceTests
 		// Arrange
 		var bytes = "Hello world"u8.ToArray();
 		var ms = new MemoryStream(bytes);
-		var file = await _service.UploadAsync(42, "hello.txt", "text/plain", ms, TestContext.Current.CancellationToken);
+		var file = await _service.UploadAsync(42, "hello.txt", "text/plain", ms);
 		var file2 = StoredFile.Create(Guid.NewGuid(), "hello.txt", "text/plain");
-		await (await _repositoryLocator.GetServiceAsync(42, TestContext.Current.CancellationToken)).PersistAsync(file2, TestContext.Current.CancellationToken);
+		await (await _repositoryLocator.GetServiceAsync(42)).PersistAsync(file2);
 
 		// Act
-		var result = await _service.GetManyAsync(42, [file.Id, file2.Id], TestContext.Current.CancellationToken);
+		var result = await _service.GetManyAsync(42, [file.Id, file2.Id]);
 
 		// Assert
 		Assert.Contains(file, result.Values);
@@ -253,7 +253,7 @@ public class StorageServiceTests
 	public async Task RenameAsync_DoesNotExist_Throws()
 	{
 		// Act && Assert
-		await Assert.ThrowsAsync<FileNotFoundException>(async () => await _service.RenameAsync(42, Guid.NewGuid(), "world.txt", TestContext.Current.CancellationToken));
+		await Assert.ThrowsAsync<FileNotFoundException>(async () => await _service.RenameAsync(42, Guid.NewGuid(), "world.txt"));
 	}
 
 	[Fact]
@@ -261,10 +261,10 @@ public class StorageServiceTests
 	{
 		// Arrange
 		var file = StoredFile.Create(Guid.NewGuid(), "hello.txt", "text/plain").Delete();
-		await (await _repositoryLocator.GetServiceAsync(42, TestContext.Current.CancellationToken)).PersistAsync(file, TestContext.Current.CancellationToken);
+		await (await _repositoryLocator.GetServiceAsync(42)).PersistAsync(file);
 
 		// Act && Assert
-		await Assert.ThrowsAsync<FileNotFoundException>(async () => await _service.RenameAsync(42, file.Id, "world.txt", TestContext.Current.CancellationToken));
+		await Assert.ThrowsAsync<FileNotFoundException>(async () => await _service.RenameAsync(42, file.Id, "world.txt"));
 	}
 
 	[Fact]
@@ -273,12 +273,12 @@ public class StorageServiceTests
 		// Arrange
 		var bytes = "Hello world"u8.ToArray();
 		var ms = new MemoryStream(bytes);
-		var file = await _service.UploadAsync(42, "hello.txt", "text/plain", ms, TestContext.Current.CancellationToken);
-		var repository = await _repositoryLocator.GetServiceAsync(42, TestContext.Current.CancellationToken);
-		await repository.PersistAsync(file, TestContext.Current.CancellationToken);
+		var file = await _service.UploadAsync(42, "hello.txt", "text/plain", ms);
+		var repository = await _repositoryLocator.GetServiceAsync(42);
+		await repository.PersistAsync(file);
 
 		// Act && Assert
-		var ex = await Assert.ThrowsAsync<ArgumentException>(async () => await _service.RenameAsync(42, file.Id, "   ", TestContext.Current.CancellationToken));
+		var ex = await Assert.ThrowsAsync<ArgumentException>(async () => await _service.RenameAsync(42, file.Id, "   "));
 
 		Assert.Contains("filename cannot be null or whitespace", ex.Message);
 	}
@@ -289,15 +289,15 @@ public class StorageServiceTests
 		// Arrange
 		var bytes = "Hello world"u8.ToArray();
 		var ms = new MemoryStream(bytes);
-		var file = await _service.UploadAsync(42, "hello.txt", "text/plain", ms, TestContext.Current.CancellationToken);
-		var repository = await _repositoryLocator.GetServiceAsync(42, TestContext.Current.CancellationToken);
-		await repository.PersistAsync(file, TestContext.Current.CancellationToken);
+		var file = await _service.UploadAsync(42, "hello.txt", "text/plain", ms);
+		var repository = await _repositoryLocator.GetServiceAsync(42);
+		await repository.PersistAsync(file);
 
 		// Act
-		var result = await _service.RenameAsync(42, file.Id, "world.txt", TestContext.Current.CancellationToken);
+		var result = await _service.RenameAsync(42, file.Id, "world.txt");
 
 		// Assert
-		var fetched = await _service.GetAsync(42, file.Id, TestContext.Current.CancellationToken);
+		var fetched = await _service.GetAsync(42, file.Id);
 		Assert.Equal("world.txt", result.FileName);
 		Assert.Equal("world.txt", fetched.FileName);
 	}
@@ -308,15 +308,15 @@ public class StorageServiceTests
 		// Arrange
 		var bytes = "Hello world"u8.ToArray();
 		var ms = new MemoryStream(bytes);
-		var file = await _service.UploadAsync(42, "hello.txt", "text/plain", ms, TestContext.Current.CancellationToken);
-		var repository = await _repositoryLocator.GetServiceAsync(42, TestContext.Current.CancellationToken);
-		await repository.PersistAsync(file, TestContext.Current.CancellationToken);
+		var file = await _service.UploadAsync(42, "hello.txt", "text/plain", ms);
+		var repository = await _repositoryLocator.GetServiceAsync(42);
+		await repository.PersistAsync(file);
 
 		// Act
-		var result = await _service.RenameAsync(42, file.Id, "world.jpg", TestContext.Current.CancellationToken);
+		var result = await _service.RenameAsync(42, file.Id, "world.jpg");
 
 		// Assert
-		var fetched = await _service.GetAsync(42, file.Id, TestContext.Current.CancellationToken);
+		var fetched = await _service.GetAsync(42, file.Id);
 		Assert.Equal("world.jpg", result.FileName);
 		Assert.Equal("world.jpg", fetched.FileName);
 		Assert.Equal("text/plain", fetched.MimeType);

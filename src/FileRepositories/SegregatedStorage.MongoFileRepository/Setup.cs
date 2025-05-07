@@ -12,7 +12,61 @@ public static class Setup
 	/// <summary>
 	///     Add MongoDB based File Repository for storing metadata.
 	/// </summary>
-	/// <param name="connectionString">Connectionstring for MongoDB</param>
+	/// <param name="connectionString">ConnectionString for MongoDB</param>
+	/// <param name="collectionNameFactory">Factory method for creating collection names for segregation</param>
+	/// <param name="databaseName">Database name</param>
+	/// <param name="guidRepresentation">How guids are serialized to MongoDB</param>
+	/// <typeparam name="TKey">Type of segregation key</typeparam>
+	public static IServiceCollection AddMongoFileRepository<TKey>(this IServiceCollection services, string connectionString, Func<TKey, string> collectionNameFactory,
+		string databaseName, GuidRepresentation guidRepresentation)
+		where TKey : notnull
+	{
+		RegisterGuidSerializer(guidRepresentation);
+		return AddMongoFileRepository(services, connectionString, databaseName, collectionNameFactory);
+	}
+
+	/// <summary>
+	///     Add MongoDB based File Repository for storing metadata.
+	/// </summary>
+	/// <param name="connectionString">ConnectionString for MongoDB</param>
+	/// <param name="collectionNameFactory">Factory method for creating collection names for segregation</param>
+	/// <param name="databaseName">Database name</param>
+	/// <param name="guidRepresentation">How guids are serialized to MongoDB</param>
+	/// <typeparam name="TKey">Type of segregation key</typeparam>
+	public static IServiceCollection AddMongoFileRepository<TKey>(this IServiceCollection services, string connectionString, Func<TKey, string> collectionNameFactory,
+		string databaseName, BsonType guidRepresentation)
+		where TKey : notnull
+	{
+		RegisterGuidSerializer(guidRepresentation);
+		return AddMongoFileRepository(services, connectionString, databaseName, collectionNameFactory);
+	}
+
+	/// <summary>
+	///     Add MongoDB based File Repository for storing metadata.
+	/// </summary>
+	/// <param name="connectionString">ConnectionString for MongoDB</param>
+	/// <param name="collectionNameFactory">Factory method for creating collection names for segregation</param>
+	/// <param name="databaseName">Database name</param>
+	/// <typeparam name="TKey">Type of segregation key</typeparam>
+	public static IServiceCollection AddMongoFileRepository<TKey>(this IServiceCollection services, string connectionString, Func<TKey, string> collectionNameFactory,
+		string databaseName)
+		where TKey : notnull
+	{
+		var mongoClient = new MongoClient(connectionString);
+
+		return services.AddKeyServiceLocator<TKey, IFileRepository>((key, _) =>
+		{
+			var db = mongoClient.GetDatabase(databaseName);
+
+			var collectionName = collectionNameFactory(key);
+			return ValueTask.FromResult<IFileRepository>(new MongoFileRepository(db, collectionName));
+		});
+	}
+
+	/// <summary>
+	///     Add MongoDB based File Repository for storing metadata.
+	/// </summary>
+	/// <param name="connectionString">ConnectionString for MongoDB</param>
 	/// <param name="collectionName">Name of the collection to store metadata in</param>
 	/// <param name="databaseNameFactory">Factory method for creating database names for segregation</param>
 	/// <typeparam name="TKey">Type of segregation key</typeparam>
@@ -34,7 +88,7 @@ public static class Setup
 	/// <summary>
 	///     Add MongoDB based File Repository for storing metadata.
 	/// </summary>
-	/// <param name="connectionString">Connectionstring for MongoDB</param>
+	/// <param name="connectionString">ConnectionString for MongoDB</param>
 	/// <param name="collectionName">Name of the collection to store metadata in</param>
 	/// <param name="databaseNameFactory">Factory method for creating database names for segregation</param>
 	/// <param name="guidRepresentation">How guids are serialized to MongoDB</param>
@@ -50,7 +104,7 @@ public static class Setup
 	/// <summary>
 	///     Add MongoDB based File Repository for storing metadata.
 	/// </summary>
-	/// <param name="connectionString">Connectionstring for MongoDB</param>
+	/// <param name="connectionString">ConnectionString for MongoDB</param>
 	/// <param name="collectionName">Name of the collection to store metadata in</param>
 	/// <param name="databaseNameFactory">Factory method for creating database names for segregation</param>
 	/// <param name="guidRepresentation">How guids are serialized to MongoDB</param>

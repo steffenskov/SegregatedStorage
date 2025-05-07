@@ -11,7 +11,7 @@ public class CosmosSetupTests
 	}
 
 	[Fact]
-	public async Task AddCosmosFileRepository_DoesNotExist_IsAdded()
+	public async Task AddCosmosFileRepository_SegregatedDatabaseDoesNotExist_IsAdded()
 	{
 		// Arrange
 		var services = new ServiceCollection();
@@ -24,7 +24,25 @@ public class CosmosSetupTests
 		var serviceLocator = provider.GetService<IAsyncServiceLocator<int, IFileRepository>>();
 
 		Assert.NotNull(serviceLocator);
-		var service = await serviceLocator.GetServiceAsync(42, TestContext.Current.CancellationToken);
+		var service = await serviceLocator.GetServiceAsync(42);
+		Assert.IsType<CosmosFileRepository>(service);
+	}
+
+	[Fact]
+	public async Task AddCosmosFileRepository_SegregatedContainerDoesNotExist_IsAdded()
+	{
+		// Arrange
+		var services = new ServiceCollection();
+
+		// Act
+		services.AddCosmosFileRepository<int>(_connectionString, key => "mycol_" + key, "db");
+
+		// Assert
+		var provider = services.BuildServiceProvider();
+		var serviceLocator = provider.GetService<IAsyncServiceLocator<int, IFileRepository>>();
+
+		Assert.NotNull(serviceLocator);
+		var service = await serviceLocator.GetServiceAsync(42);
 		Assert.IsType<CosmosFileRepository>(service);
 	}
 }

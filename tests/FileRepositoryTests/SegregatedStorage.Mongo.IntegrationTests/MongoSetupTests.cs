@@ -11,7 +11,7 @@ public class MongoSetupTests
 	}
 
 	[Fact]
-	public async Task AddMongoFileRepository_DoesNotExist_IsAdded()
+	public async Task AddMongoFileRepository_SegregatedDatabaseDoesNotExist_IsAdded()
 	{
 		// Arrange
 		var services = new ServiceCollection();
@@ -24,7 +24,25 @@ public class MongoSetupTests
 		var serviceLocator = provider.GetService<IAsyncServiceLocator<int, IFileRepository>>();
 
 		Assert.NotNull(serviceLocator);
-		var service = await serviceLocator.GetServiceAsync(42, TestContext.Current.CancellationToken);
+		var service = await serviceLocator.GetServiceAsync(42);
+		Assert.IsType<MongoFileRepository>(service);
+	}
+
+	[Fact]
+	public async Task AddMongoFileRepository_SegregatedCollectionDoesNotExist_IsAdded()
+	{
+		// Arrange
+		var services = new ServiceCollection();
+
+		// Act
+		services.AddMongoFileRepository<int>(_connectionString, key => "mycol_" + key, "db");
+
+		// Assert
+		var provider = services.BuildServiceProvider();
+		var serviceLocator = provider.GetService<IAsyncServiceLocator<int, IFileRepository>>();
+
+		Assert.NotNull(serviceLocator);
+		var service = await serviceLocator.GetServiceAsync(42);
 		Assert.IsType<MongoFileRepository>(service);
 	}
 }
