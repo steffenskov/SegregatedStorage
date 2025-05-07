@@ -86,7 +86,7 @@ public class SetupTests
 		var serviceLocator = provider.GetService<IAsyncServiceLocator<int, IStorageProvider>>();
 
 		Assert.NotNull(serviceLocator);
-		var service = await serviceLocator.GetServiceAsync(42, TestContext.Current.CancellationToken);
+		var service = await serviceLocator.GetServiceAsync(42);
 
 		Assert.IsType<InMemoryStorageProvider>(service);
 	}
@@ -130,7 +130,7 @@ public class SetupTests
 		var serviceLocator = provider.GetService<IAsyncServiceLocator<int, IFileRepository>>();
 
 		Assert.NotNull(serviceLocator);
-		var service = await serviceLocator.GetServiceAsync(42, TestContext.Current.CancellationToken);
+		var service = await serviceLocator.GetServiceAsync(42);
 
 		Assert.IsType<InMemoryFileRepository>(service);
 	}

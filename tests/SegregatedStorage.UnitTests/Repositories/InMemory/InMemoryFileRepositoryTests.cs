@@ -10,10 +10,10 @@ public class InMemoryFileRepositoryTests
 		var file = StoredFile.Create(Guid.NewGuid(), "image.jpg", "image/jpg");
 
 		// Act
-		await repository.PersistAsync(file, TestContext.Current.CancellationToken);
+		await repository.PersistAsync(file);
 
 		// Assert
-		var ex = await Record.ExceptionAsync(async () => await repository.GetAsync(file.Id, TestContext.Current.CancellationToken));
+		var ex = await Record.ExceptionAsync(async () => await repository.GetAsync(file.Id));
 
 		Assert.Null(ex);
 	}
@@ -24,15 +24,15 @@ public class InMemoryFileRepositoryTests
 		// Arrange
 		var repository = new InMemoryFileRepository();
 		var file = StoredFile.Create(Guid.NewGuid(), "image.jpg", "image/jpg");
-		await repository.PersistAsync(file, TestContext.Current.CancellationToken);
+		await repository.PersistAsync(file);
 
 		var updatedFile = file.Uploaded();
 
 		// Act
-		await repository.PersistAsync(updatedFile, TestContext.Current.CancellationToken);
+		await repository.PersistAsync(updatedFile);
 
 		// Assert
-		var fetched = await repository.GetAsync(file.Id, TestContext.Current.CancellationToken);
+		var fetched = await repository.GetAsync(file.Id);
 		Assert.NotEqual(file, updatedFile);
 		Assert.Equal(updatedFile, fetched);
 	}
@@ -44,7 +44,7 @@ public class InMemoryFileRepositoryTests
 		var repository = new InMemoryFileRepository();
 
 		// Act && Assert
-		await Assert.ThrowsAsync<FileNotFoundException>(async () => await repository.GetAsync(Guid.NewGuid(), TestContext.Current.CancellationToken));
+		await Assert.ThrowsAsync<FileNotFoundException>(async () => await repository.GetAsync(Guid.NewGuid()));
 	}
 
 	[Fact]
@@ -54,10 +54,10 @@ public class InMemoryFileRepositoryTests
 		var repository = new InMemoryFileRepository();
 		var otherRepository = new InMemoryFileRepository();
 		var file = StoredFile.Create(Guid.NewGuid(), "image.jpg", "image/jpg");
-		await repository.PersistAsync(file, TestContext.Current.CancellationToken);
+		await repository.PersistAsync(file);
 
 		// Act && Assert
-		await Assert.ThrowsAsync<FileNotFoundException>(async () => await otherRepository.GetAsync(file.Id, TestContext.Current.CancellationToken));
+		await Assert.ThrowsAsync<FileNotFoundException>(async () => await otherRepository.GetAsync(file.Id));
 	}
 
 	[Fact]
@@ -66,10 +66,10 @@ public class InMemoryFileRepositoryTests
 		// Arrange
 		var repository = new InMemoryFileRepository();
 		var file = StoredFile.Create(Guid.NewGuid(), "image.jpg", "image/jpg");
-		await repository.PersistAsync(file, TestContext.Current.CancellationToken);
+		await repository.PersistAsync(file);
 
 		// Act
-		var fetched = await repository.GetAsync(file.Id, TestContext.Current.CancellationToken);
+		var fetched = await repository.GetAsync(file.Id);
 
 		// Assert
 		Assert.Equal(file, fetched);
@@ -81,13 +81,13 @@ public class InMemoryFileRepositoryTests
 		// Arrange
 		var repository = new InMemoryFileRepository();
 		var file = StoredFile.Create(Guid.NewGuid(), "image.jpg", "image/jpg");
-		await repository.PersistAsync(file, TestContext.Current.CancellationToken);
+		await repository.PersistAsync(file);
 
 		// Act
-		await repository.DeleteAsync(file.Id, TestContext.Current.CancellationToken);
+		await repository.DeleteAsync(file.Id);
 
 		// Assert
-		var ex = await Record.ExceptionAsync(async () => await repository.GetAsync(file.Id, TestContext.Current.CancellationToken));
+		var ex = await Record.ExceptionAsync(async () => await repository.GetAsync(file.Id));
 		Assert.IsType<FileNotFoundException>(ex);
 	}
 
@@ -98,7 +98,7 @@ public class InMemoryFileRepositoryTests
 		var repository = new InMemoryFileRepository();
 
 		// Act && Assert
-		await Assert.ThrowsAsync<FileNotFoundException>(async () => await repository.DeleteAsync(Guid.NewGuid(), TestContext.Current.CancellationToken));
+		await Assert.ThrowsAsync<FileNotFoundException>(async () => await repository.DeleteAsync(Guid.NewGuid()));
 	}
 
 	[Fact]
@@ -108,7 +108,7 @@ public class InMemoryFileRepositoryTests
 		var repository = new InMemoryFileRepository();
 
 		// Act
-		var files = await repository.GetForDeletionAsync(TestContext.Current.CancellationToken);
+		var files = await repository.GetForDeletionAsync();
 
 		// Assert
 		Assert.Empty(files);
@@ -122,12 +122,12 @@ public class InMemoryFileRepositoryTests
 		var file1 = StoredFile.Create(Guid.NewGuid(), "image.jpg", "image/jpg");
 		var file2 = StoredFile.Create(Guid.NewGuid(), "image.jpg", "image/jpg").Delete();
 		var file3 = StoredFile.Create(Guid.NewGuid(), "image.jpg", "image/jpg").Delete();
-		await repository.PersistAsync(file1, TestContext.Current.CancellationToken);
-		await repository.PersistAsync(file2, TestContext.Current.CancellationToken);
-		await repository.PersistAsync(file3, TestContext.Current.CancellationToken);
+		await repository.PersistAsync(file1);
+		await repository.PersistAsync(file2);
+		await repository.PersistAsync(file3);
 
 		// Act
-		var files = (await repository.GetForDeletionAsync(TestContext.Current.CancellationToken)).ToList();
+		var files = (await repository.GetForDeletionAsync()).ToList();
 
 		// Assert
 		Assert.DoesNotContain(file1, files);

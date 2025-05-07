@@ -17,14 +17,14 @@ public abstract class FileRepositoryTests
 	public async Task PersistAsync_Valid_IsPersisted()
 	{
 		// Arrange
-		var repository = await _repositoryLocator.GetServiceAsync(42, TestContext.Current.CancellationToken);
+		var repository = await _repositoryLocator.GetServiceAsync(42);
 		var file = StoredFile.Create(Guid.NewGuid(), "image.jpg", "image/jpg");
 
 		// Act
-		await repository.PersistAsync(file, TestContext.Current.CancellationToken);
+		await repository.PersistAsync(file);
 
 		// Assert
-		var ex = await Record.ExceptionAsync(async () => await repository.GetAsync(file.Id, TestContext.Current.CancellationToken));
+		var ex = await Record.ExceptionAsync(async () => await repository.GetAsync(file.Id));
 
 		Assert.Null(ex);
 	}
@@ -33,17 +33,17 @@ public abstract class FileRepositoryTests
 	public async Task PersistAsync_IdAlreadyExists_IsOverwritten()
 	{
 		// Arrange
-		var repository = await _repositoryLocator.GetServiceAsync(42, TestContext.Current.CancellationToken);
+		var repository = await _repositoryLocator.GetServiceAsync(42);
 		var file = StoredFile.Create(Guid.NewGuid(), "image.jpg", "image/jpg");
-		await repository.PersistAsync(file, TestContext.Current.CancellationToken);
+		await repository.PersistAsync(file);
 
 		var updatedFile = file.Uploaded();
 
 		// Act
-		await repository.PersistAsync(updatedFile, TestContext.Current.CancellationToken);
+		await repository.PersistAsync(updatedFile);
 
 		// Assert
-		var fetched = await repository.GetAsync(file.Id, TestContext.Current.CancellationToken);
+		var fetched = await repository.GetAsync(file.Id);
 		Assert.NotEqual(file, updatedFile);
 		Assert.Equal(updatedFile, fetched);
 	}
@@ -52,35 +52,35 @@ public abstract class FileRepositoryTests
 	public async Task GetAsync_DoesNotExist_Throws()
 	{
 		// Arrange
-		var repository = await _repositoryLocator.GetServiceAsync(42, TestContext.Current.CancellationToken);
+		var repository = await _repositoryLocator.GetServiceAsync(42);
 
 		// Act && Assert
-		await Assert.ThrowsAsync<FileNotFoundException>(async () => await repository.GetAsync(Guid.NewGuid(), TestContext.Current.CancellationToken));
+		await Assert.ThrowsAsync<FileNotFoundException>(async () => await repository.GetAsync(Guid.NewGuid()));
 	}
 
 	[Fact]
 	public async Task GetAsync_ExistOnOtherKey_Throws()
 	{
 		// Arrange
-		var repository = await _repositoryLocator.GetServiceAsync(42, TestContext.Current.CancellationToken);
-		var otherRepository = await _repositoryLocator.GetServiceAsync(43, TestContext.Current.CancellationToken);
+		var repository = await _repositoryLocator.GetServiceAsync(42);
+		var otherRepository = await _repositoryLocator.GetServiceAsync(43);
 		var file = StoredFile.Create(Guid.NewGuid(), "image.jpg", "image/jpg");
-		await repository.PersistAsync(file, TestContext.Current.CancellationToken);
+		await repository.PersistAsync(file);
 
 		// Act && Assert
-		await Assert.ThrowsAsync<FileNotFoundException>(async () => await otherRepository.GetAsync(file.Id, TestContext.Current.CancellationToken));
+		await Assert.ThrowsAsync<FileNotFoundException>(async () => await otherRepository.GetAsync(file.Id));
 	}
 
 	[Fact]
 	public async Task GetAsync_Exist_IsRetrieved()
 	{
 		// Arrange
-		var repository = await _repositoryLocator.GetServiceAsync(42, TestContext.Current.CancellationToken);
+		var repository = await _repositoryLocator.GetServiceAsync(42);
 		var file = StoredFile.Create(Guid.NewGuid(), "image.jpg", "image/jpg");
-		await repository.PersistAsync(file, TestContext.Current.CancellationToken);
+		await repository.PersistAsync(file);
 
 		// Act
-		var fetched = await repository.GetAsync(file.Id, TestContext.Current.CancellationToken);
+		var fetched = await repository.GetAsync(file.Id);
 
 		// Assert
 		Assert.Equal(file, fetched);
@@ -90,10 +90,10 @@ public abstract class FileRepositoryTests
 	public async Task GetManyAsync_DoesNotExist_ReturnsEmpty()
 	{
 		// Arrange
-		var repository = await _repositoryLocator.GetServiceAsync(42, TestContext.Current.CancellationToken);
+		var repository = await _repositoryLocator.GetServiceAsync(42);
 
 		// Act
-		var result = await repository.GetManyAsync([Guid.NewGuid(), Guid.NewGuid()], TestContext.Current.CancellationToken);
+		var result = await repository.GetManyAsync([Guid.NewGuid(), Guid.NewGuid()]);
 
 		// Assert
 		Assert.Empty(result);
@@ -103,13 +103,13 @@ public abstract class FileRepositoryTests
 	public async Task GetManyAsync_ExistsOnOtherKey_ReturnsEmpty()
 	{
 		// Arrange
-		var repository = await _repositoryLocator.GetServiceAsync(42, TestContext.Current.CancellationToken);
-		var otherRepository = await _repositoryLocator.GetServiceAsync(43, TestContext.Current.CancellationToken);
+		var repository = await _repositoryLocator.GetServiceAsync(42);
+		var otherRepository = await _repositoryLocator.GetServiceAsync(43);
 		var file = StoredFile.Create(Guid.NewGuid(), "image.jpg", "image/jpg");
-		await repository.PersistAsync(file, TestContext.Current.CancellationToken);
+		await repository.PersistAsync(file);
 
 		// Act
-		var result = await otherRepository.GetManyAsync([file.Id], TestContext.Current.CancellationToken);
+		var result = await otherRepository.GetManyAsync([file.Id]);
 
 		// Assert
 		Assert.Empty(result);
@@ -119,14 +119,14 @@ public abstract class FileRepositoryTests
 	public async Task GetManyAsync_SomeExist_AreReturned()
 	{
 		// Arrange
-		var repository = await _repositoryLocator.GetServiceAsync(42, TestContext.Current.CancellationToken);
+		var repository = await _repositoryLocator.GetServiceAsync(42);
 		var file = StoredFile.Create(Guid.NewGuid(), "image.jpg", "image/jpg");
 		var file2 = StoredFile.Create(Guid.NewGuid(), "text.txt", "text/plain");
-		await repository.PersistAsync(file, TestContext.Current.CancellationToken);
-		await repository.PersistAsync(file2, TestContext.Current.CancellationToken);
+		await repository.PersistAsync(file);
+		await repository.PersistAsync(file2);
 
 		// Act
-		var result = (await repository.GetManyAsync([file.Id, file2.Id, Guid.NewGuid()], TestContext.Current.CancellationToken)).ToList();
+		var result = (await repository.GetManyAsync([file.Id, file2.Id, Guid.NewGuid()])).ToList();
 
 		// Assert
 		Assert.Equal(2, result.Count());
@@ -138,15 +138,15 @@ public abstract class FileRepositoryTests
 	public async Task DeleteAsync_Exist_IsDeleted()
 	{
 		// Arrange
-		var repository = await _repositoryLocator.GetServiceAsync(42, TestContext.Current.CancellationToken);
+		var repository = await _repositoryLocator.GetServiceAsync(42);
 		var file = StoredFile.Create(Guid.NewGuid(), "image.jpg", "image/jpg");
-		await repository.PersistAsync(file, TestContext.Current.CancellationToken);
+		await repository.PersistAsync(file);
 
 		// Act
-		await repository.DeleteAsync(file.Id, TestContext.Current.CancellationToken);
+		await repository.DeleteAsync(file.Id);
 
 		// Assert
-		var ex = await Record.ExceptionAsync(async () => await repository.GetAsync(file.Id, TestContext.Current.CancellationToken));
+		var ex = await Record.ExceptionAsync(async () => await repository.GetAsync(file.Id));
 		Assert.IsType<FileNotFoundException>(ex);
 	}
 
@@ -154,20 +154,20 @@ public abstract class FileRepositoryTests
 	public async Task DeleteAsync_DoesNotExist_Throws()
 	{
 		// Arrange
-		var repository = await _repositoryLocator.GetServiceAsync(42, TestContext.Current.CancellationToken);
+		var repository = await _repositoryLocator.GetServiceAsync(42);
 
 		// Act && Assert
-		await Assert.ThrowsAsync<FileNotFoundException>(async () => await repository.DeleteAsync(Guid.NewGuid(), TestContext.Current.CancellationToken));
+		await Assert.ThrowsAsync<FileNotFoundException>(async () => await repository.DeleteAsync(Guid.NewGuid()));
 	}
 
 	[Fact]
 	public async Task GetForDeletionAsync_NoneExist_ReturnsEmptyCollection()
 	{
 		// Arrange
-		var repository = await _repositoryLocator.GetServiceAsync(Random.Shared.Next(), TestContext.Current.CancellationToken);
+		var repository = await _repositoryLocator.GetServiceAsync(Random.Shared.Next());
 
 		// Act
-		var files = await repository.GetForDeletionAsync(TestContext.Current.CancellationToken);
+		var files = await repository.GetForDeletionAsync();
 
 		// Assert
 		Assert.Empty(files);
@@ -177,16 +177,16 @@ public abstract class FileRepositoryTests
 	public async Task GetForDeletionAsync_SomeExist_ReturnsOnlyDeleted()
 	{
 		// Arrange
-		var repository = await _repositoryLocator.GetServiceAsync(42, TestContext.Current.CancellationToken);
+		var repository = await _repositoryLocator.GetServiceAsync(42);
 		var file1 = StoredFile.Create(Guid.NewGuid(), "image.jpg", "image/jpg");
 		var file2 = StoredFile.Create(Guid.NewGuid(), "image.jpg", "image/jpg").Delete();
 		var file3 = StoredFile.Create(Guid.NewGuid(), "image.jpg", "image/jpg").Delete();
-		await repository.PersistAsync(file1, TestContext.Current.CancellationToken);
-		await repository.PersistAsync(file2, TestContext.Current.CancellationToken);
-		await repository.PersistAsync(file3, TestContext.Current.CancellationToken);
+		await repository.PersistAsync(file1);
+		await repository.PersistAsync(file2);
+		await repository.PersistAsync(file3);
 
 		// Act
-		var files = (await repository.GetForDeletionAsync(TestContext.Current.CancellationToken)).ToList();
+		var files = (await repository.GetForDeletionAsync()).ToList();
 
 		// Assert
 		Assert.DoesNotContain(file1, files);

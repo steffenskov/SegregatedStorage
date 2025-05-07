@@ -24,7 +24,7 @@ public class AzureSetupTests
 		var serviceLocator = provider.GetService<IAsyncServiceLocator<int, IStorageProvider>>();
 
 		Assert.NotNull(serviceLocator);
-		var service = await serviceLocator.GetServiceAsync(42, TestContext.Current.CancellationToken);
+		var service = await serviceLocator.GetServiceAsync(42);
 		Assert.IsType<AzureStorageProvider>(service);
 	}
 }
