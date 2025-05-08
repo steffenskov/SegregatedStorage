@@ -38,7 +38,7 @@ public static class Setup
 		where TKey : notnull
 	{
 		RegisterGuidSerializer(guidRepresentation);
-		return AddMongoFileRepository(services, connectionString, databaseName, collectionNameFactory);
+		return AddMongoFileRepository(services, connectionString, collectionNameFactory, databaseName);
 	}
 
 	/// <summary>
@@ -53,13 +53,25 @@ public static class Setup
 		where TKey : notnull
 	{
 		var mongoClient = new MongoClient(connectionString);
+		var mongoDatabase = mongoClient.GetDatabase(databaseName);
 
+		return AddMongoFileRepository(services, collectionNameFactory, mongoDatabase);
+	}
+
+	/// <summary>
+	///     Add MongoDB based File Repository for storing metadata.
+	/// </summary>
+	/// <param name="collectionNameFactory">Factory method for creating collection names for segregation</param>
+	/// <param name="database">Database</param>
+	/// <typeparam name="TKey">Type of segregation key</typeparam>
+	public static IServiceCollection AddMongoFileRepository<TKey>(this IServiceCollection services, Func<TKey, string> collectionNameFactory,
+		IMongoDatabase database)
+		where TKey : notnull
+	{
 		return services.AddKeyServiceLocator<TKey, IFileRepository>((key, _) =>
 		{
-			var db = mongoClient.GetDatabase(databaseName);
-
 			var collectionName = collectionNameFactory(key);
-			return ValueTask.FromResult<IFileRepository>(new MongoFileRepository(db, collectionName));
+			return ValueTask.FromResult<IFileRepository>(new MongoFileRepository(database, collectionName));
 		});
 	}
 
