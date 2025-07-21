@@ -17,11 +17,11 @@
         <RootNamespace>SegregatedStorage</RootNamespace>
     </PropertyGroup>
     <ItemGroup>
-        <None Include="../../../README.md" Pack="true" PackagePath="\"/>
+        <None Include="../../../README.md" Pack="true" PackagePath="\" />
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="MongoDB.Driver" Version="3.4.0"/>
+        <PackageReference Include="MongoDB.Driver" Version="3.4.1" />
     </ItemGroup>
 
     <ItemGroup>
