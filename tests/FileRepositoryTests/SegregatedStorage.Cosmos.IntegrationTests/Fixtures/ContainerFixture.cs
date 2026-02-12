@@ -9,8 +9,7 @@ public class ContainerFixture : IAsyncLifetime
 
 	public ContainerFixture()
 	{
-		_cosmosContainer = new CosmosDbBuilder()
-			.WithImage("mcr.microsoft.com/cosmosdb/linux/azure-cosmos-emulator:vnext-preview")
+		_cosmosContainer = new CosmosDbBuilder("mcr.microsoft.com/cosmosdb/linux/azure-cosmos-emulator:vnext-preview")
 			.WithWaitStrategy(Wait.ForUnixContainer().UntilMessageIsLogged("Emulator is accessible"))
 			.Build();
 	}
