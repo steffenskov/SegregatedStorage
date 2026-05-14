@@ -1,32 +1,23 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>net9.0</TargetFramework>
-        <Nullable>enable</Nullable>
-        <ImplicitUsings>enable</ImplicitUsings>
-        <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-
-        <Authors>Steffen Skov</Authors>
-        <Company>Steffen Skov</Company>
         <Description>Extension to SegregatedStorage adding support for CosmosDB for storing metadata</Description>
-        <Copyright>Steffen Skov 2024</Copyright>
-        <PackageLicenseExpression>MIT</PackageLicenseExpression>
         <PackageProjectUrl>https://github.com/steffenskov/SegregatedStorage.CosmosFileRepository</PackageProjectUrl>
         <PackageTags>storage, segregation</PackageTags>
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <RootNamespace>SegregatedStorage</RootNamespace>
     </PropertyGroup>
     <ItemGroup>
-        <None Include="../../../README.md" Pack="true" PackagePath="\" />
+        <None Include="../../../README.md" Pack="true" PackagePath="\"/>
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Microsoft.Azure.Cosmos" Version="3.57.1" />
-        <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
+        <PackageReference Include="Microsoft.Azure.Cosmos"/>
+        <PackageReference Include="Newtonsoft.Json"/>
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\..\SegregatedStorage\SegregatedStorage.csproj" />
+        <ProjectReference Include="..\..\SegregatedStorage\SegregatedStorage.csproj"/>
     </ItemGroup>
 
 </Project>
