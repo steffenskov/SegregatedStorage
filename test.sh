@@ -1,5 +1,8 @@
 #!/bin/sh
-rm -rf TestResults coverage-report 2> /dev/null
+
+set -e
+
+rm -rf TestResults 2> /dev/null
 
 dotnet test --results-directory ./TestResults --collect:"XPlat Code Coverage"
 
@@ -9,5 +12,6 @@ reportgenerator \
   -reporttypes:Html \
   -filefilters:"-**/obj/**"
 
-rm -rf TestResults 2> /dev/null
+
+[ -f coverage-report/index.html ]
 xdg-open coverage-report/index.html

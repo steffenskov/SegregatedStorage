@@ -34,9 +34,14 @@ public record StoredFile
 
 	public StoredFile Uploaded(byte[] fileHash)
 	{
+		if (fileHash.Length == 0)
+		{
+			throw new ArgumentException("fileHash is empty", nameof(fileHash));
+		}
+
 		if (State != FileState.AwaitingUpload)
 		{
-			throw new InvalidOperationException($"StoredFile is not awaiting upload!. Aggregate: {this}");
+			throw new InvalidOperationException($"StoredFile is not awaiting upload! Aggregate: {this}");
 		}
 
 		return this with
