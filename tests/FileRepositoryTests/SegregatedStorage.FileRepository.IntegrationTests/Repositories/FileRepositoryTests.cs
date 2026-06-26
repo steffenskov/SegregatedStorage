@@ -37,7 +37,7 @@ public abstract class FileRepositoryTests
 		var file = StoredFile.Create(Guid.NewGuid(), "image.jpg", "image/jpg");
 		await repository.PersistAsync(file);
 
-		var updatedFile = file.Uploaded();
+		var updatedFile = file.Uploaded([1]);
 
 		// Act
 		await repository.PersistAsync(updatedFile);

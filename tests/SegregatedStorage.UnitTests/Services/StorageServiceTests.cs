@@ -1,3 +1,4 @@
+using System.Security.Cryptography;
 using SegregatedStorage.ValueObjects;
 
 namespace SegregatedStorage.UnitTests.Services;
@@ -11,7 +12,7 @@ public class StorageServiceTests
 	{
 		_repositoryLocator = new AsyncServiceLocator<int, IFileRepository>(_ => new InMemoryFileRepository());
 		var storageProviderLocator = new AsyncServiceLocator<int, IStorageProvider>(_ => new InMemoryStorageProvider());
-		_service = new StorageService<int>(_repositoryLocator, storageProviderLocator);
+		_service = new StorageService<int>(_repositoryLocator, storageProviderLocator, HashAlgorithmName.MD5);
 	}
 
 	[Fact]
@@ -19,7 +20,7 @@ public class StorageServiceTests
 	{
 		// Arrange
 		var bytes = "Hello world"u8.ToArray();
-		var ms = new MemoryStream(bytes);
+		using var ms = new MemoryStream(bytes);
 
 		// Act
 		var uploadedFile = await _service.UploadAsync(42, "hello.txt", "text/plain", ms);
@@ -35,7 +36,7 @@ public class StorageServiceTests
 	{
 		// Arrange
 		var bytes = "Hello world"u8.ToArray();
-		var ms = new MemoryStream(bytes);
+		using var ms = new MemoryStream(bytes);
 
 		// Act
 		var id = Guid.NewGuid();
@@ -52,11 +53,12 @@ public class StorageServiceTests
 	{
 		// Arrange
 		var bytes = "Hello world"u8.ToArray();
-		var ms = new MemoryStream(bytes);
+		using var ms = new MemoryStream(bytes);
+		using var ms2 = new MemoryStream(bytes);
 		var id = await _service.UploadAsync(42, "hello.txt", "text/plain", ms);
 
 		// Act
-		var id2 = await _service.UploadAsync(42, "hello.txt", "text/plain", ms);
+		var id2 = await _service.UploadAsync(42, "hello.txt", "text/plain", ms2);
 
 		// Assert
 		Assert.NotEqual(id, id2);
@@ -96,7 +98,7 @@ public class StorageServiceTests
 	{
 		// Arrange
 		var bytes = "Hello world"u8.ToArray();
-		var ms = new MemoryStream(bytes);
+		using var ms = new MemoryStream(bytes);
 		var uploadedFile = await _service.UploadAsync(42, "hello.txt", "text/plain", ms);
 
 		// Act
@@ -135,7 +137,7 @@ public class StorageServiceTests
 	{
 		// Arrange
 		var bytes = "Hello world"u8.ToArray();
-		var ms = new MemoryStream(bytes);
+		using var ms = new MemoryStream(bytes);
 		var uploadedFile = await _service.UploadAsync(42, "hello.txt", "text/plain", ms);
 
 		// Act
@@ -182,7 +184,7 @@ public class StorageServiceTests
 	{
 		// Arrange
 		var bytes = "Hello world"u8.ToArray();
-		var ms = new MemoryStream(bytes);
+		using var ms = new MemoryStream(bytes);
 		var file = await _service.UploadAsync(42, "hello.txt", "text/plain", ms);
 
 		// Act
@@ -236,7 +238,7 @@ public class StorageServiceTests
 	{
 		// Arrange
 		var bytes = "Hello world"u8.ToArray();
-		var ms = new MemoryStream(bytes);
+		using var ms = new MemoryStream(bytes);
 		var file = await _service.UploadAsync(42, "hello.txt", "text/plain", ms);
 		var file2 = StoredFile.Create(Guid.NewGuid(), "hello.txt", "text/plain");
 		await (await _repositoryLocator.GetServiceAsync(42)).PersistAsync(file2);
@@ -272,7 +274,7 @@ public class StorageServiceTests
 	{
 		// Arrange
 		var bytes = "Hello world"u8.ToArray();
-		var ms = new MemoryStream(bytes);
+		using var ms = new MemoryStream(bytes);
 		var file = await _service.UploadAsync(42, "hello.txt", "text/plain", ms);
 		var repository = await _repositoryLocator.GetServiceAsync(42);
 		await repository.PersistAsync(file);
@@ -288,7 +290,7 @@ public class StorageServiceTests
 	{
 		// Arrange
 		var bytes = "Hello world"u8.ToArray();
-		var ms = new MemoryStream(bytes);
+		using var ms = new MemoryStream(bytes);
 		var file = await _service.UploadAsync(42, "hello.txt", "text/plain", ms);
 		var repository = await _repositoryLocator.GetServiceAsync(42);
 		await repository.PersistAsync(file);
@@ -307,7 +309,7 @@ public class StorageServiceTests
 	{
 		// Arrange
 		var bytes = "Hello world"u8.ToArray();
-		var ms = new MemoryStream(bytes);
+		using var ms = new MemoryStream(bytes);
 		var file = await _service.UploadAsync(42, "hello.txt", "text/plain", ms);
 		var repository = await _repositoryLocator.GetServiceAsync(42);
 		await repository.PersistAsync(file);

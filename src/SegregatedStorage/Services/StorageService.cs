@@ -1,14 +1,18 @@
+using System.Security.Cryptography;
+
 namespace SegregatedStorage.Services;
 
 internal class StorageService<TKey> : IStorageService<TKey>
 	where TKey : notnull
 {
+	private readonly HashAlgorithmName _hashAlgorithm;
 	private readonly IAsyncServiceLocator<TKey, IFileRepository> _repositoryLocator;
 	private readonly IAsyncServiceLocator<TKey, IStorageProvider> _storageProviderLocator;
 
-	public StorageService(IAsyncServiceLocator<TKey, IFileRepository> repositoryLocator, IAsyncServiceLocator<TKey, IStorageProvider> storageProviderLocator)
+	public StorageService(IAsyncServiceLocator<TKey, IFileRepository> repositoryLocator, IAsyncServiceLocator<TKey, IStorageProvider> storageProviderLocator, HashAlgorithmName hashAlgorithm)
 	{
 		_storageProviderLocator = storageProviderLocator;
+		_hashAlgorithm = hashAlgorithm;
 		_repositoryLocator = repositoryLocator;
 	}
 
@@ -27,8 +31,12 @@ internal class StorageService<TKey> : IStorageService<TKey>
 
 		try
 		{
-			await storageProvider.UploadAsync(FilePathGenerator.GenerateFilePath(file.Id), data, cancellationToken);
-			file = file.Uploaded();
+			await using var hashingStream = new HashingStream(data, _hashAlgorithm);
+
+			await storageProvider.UploadAsync(FilePathGenerator.GenerateFilePath(file.Id), hashingStream, cancellationToken);
+			var md5 = hashingStream.GetHashAndReset();
+
+			file = file.Uploaded(md5);
 			await repository.PersistAsync(file, CancellationToken.None);
 			return file;
 		}

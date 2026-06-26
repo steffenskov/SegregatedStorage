@@ -16,7 +16,7 @@ public class InMemoryStorageProviderTests
 
 		// Assert
 		var fetched = await provider.DownloadAsync(filePath);
-		var ms = new MemoryStream();
+		using var ms = new MemoryStream();
 		await fetched.CopyToAsync(ms);
 		ms.Seek(0, SeekOrigin.Begin);
 		var fetchedBytes = ms.ToArray();

@@ -21,7 +21,12 @@ public static class Setup
 			services.AddHostedService<DeletionBackgroundService<TKey>>();
 		}
 
-		return services.AddSingleton<IStorageService<TKey>, StorageService<TKey>>();
+		return services.AddSingleton<IStorageService<TKey>>(provider =>
+			new StorageService<TKey>(
+				provider.GetRequiredService<IAsyncServiceLocator<TKey, IFileRepository>>(),
+				provider.GetRequiredService<IAsyncServiceLocator<TKey, IStorageProvider>>(),
+				configuration.HashAlgorithm)
+		);
 	}
 
 	public static IServiceCollection AddInMemoryStorageProvider<TKey>(this IServiceCollection services)
