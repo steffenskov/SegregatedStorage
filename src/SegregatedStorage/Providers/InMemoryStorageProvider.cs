@@ -9,7 +9,9 @@ internal class InMemoryStorageProvider : IStorageProvider
 	public async ValueTask UploadAsync(string filePath, Stream data, CancellationToken cancellationToken = default)
 	{
 		if (_files.TryGetValue(filePath, out _))
+		{
 			throw new ArgumentException($"File already exists at path {filePath}", nameof(filePath));
+		}
 
 		using var ms = new MemoryStream();
 		await data.CopyToAsync(ms, cancellationToken);
@@ -20,7 +22,9 @@ internal class InMemoryStorageProvider : IStorageProvider
 	public ValueTask DeleteAsync(string filePath, CancellationToken cancellationToken = default)
 	{
 		if (!_files.TryRemove(filePath, out _))
+		{
 			throw new FileNotFoundException($"File not found with path {filePath}");
+		}
 
 		return ValueTask.CompletedTask;
 	}
@@ -28,10 +32,12 @@ internal class InMemoryStorageProvider : IStorageProvider
 	public ValueTask<Stream> DownloadAsync(string filePath, CancellationToken cancellationToken = default)
 	{
 		if (!_files.TryGetValue(filePath, out var data))
+		{
 			throw new FileNotFoundException($"File not found with path {filePath}");
+		}
 
 		var ms = new MemoryStream(data);
 		ms.Seek(0, SeekOrigin.Begin);
-		return ValueTask.FromResult((Stream)ms);
+		return ValueTask.FromResult<Stream>(ms);
 	}
 }

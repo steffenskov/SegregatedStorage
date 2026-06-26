@@ -1,3 +1,7 @@
+# Want to see what's changed?
+
+[Changelog](https://github.com/steffenskov/SegregatedStorage/blob/main/CHANGELOG.md)
+
 # SegregatedStorage
 
 A small library for providing segregated storage abstraction for Web API's and similar projects.

@@ -26,7 +26,7 @@ public class InMemoryFileRepositoryTests
 		var file = StoredFile.Create(Guid.NewGuid(), "image.jpg", "image/jpg");
 		await repository.PersistAsync(file);
 
-		var updatedFile = file.Uploaded();
+		var updatedFile = file.Uploaded([]);
 
 		// Act
 		await repository.PersistAsync(updatedFile);
