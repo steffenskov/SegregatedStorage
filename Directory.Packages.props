@@ -19,7 +19,7 @@
     </ItemGroup>
     <ItemGroup Label="Main">
         <PackageVersion Include="Microsoft.AspNetCore.OpenApi" Version="10.0.9"/>
-        <PackageVersion Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.9"/>
+        <PackageVersion Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.10"/>
         <PackageVersion Include="Microsoft.Extensions.Hosting.Abstractions" Version="10.0.9"/>
     </ItemGroup>
     <ItemGroup Label="API">
