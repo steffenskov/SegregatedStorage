@@ -49,11 +49,17 @@ public class DeletionBackgroundServiceTests
 	public async Task DeleteFromRepositoriesAsync_Throws_DoesNothing()
 	{
 		// Arrange
+		var deleteCalled = false;
 		var file = StoredFile.Create(Guid.NewGuid(), "hello world", "plain/text");
 		var repository = Substitute.For<IFileRepository>();
 		var storageProvider = Substitute.For<IStorageProvider>();
 		repository.GetForDeletionAsync(Arg.Any<CancellationToken>()).Returns([file]);
+		repository.When(rep => rep.DeleteAsync(Arg.Any<Guid>(), Arg.Any<CancellationToken>())).Do(_ =>
+		{
+			deleteCalled = true;
+		});
 		repository.DeleteAsync(Arg.Any<Guid>(), Arg.Any<CancellationToken>()).ThrowsAsync<FileNotFoundException>();
+
 
 		var repositoryLocator = Substitute.For<IAsyncServiceLocator<int, IFileRepository>>();
 		repositoryLocator.GetServices().Returns([(42, repository)]);
@@ -63,6 +69,7 @@ public class DeletionBackgroundServiceTests
 
 		// Act && Assert
 		var ex = await Record.ExceptionAsync(async () => await service.InvokeDeleteFromRepositoriesAsync());
+		Assert.True(deleteCalled);
 		Assert.Null(ex);
 	}
 

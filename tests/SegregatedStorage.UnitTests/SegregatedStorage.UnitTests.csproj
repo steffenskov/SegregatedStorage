@@ -18,6 +18,8 @@
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
+        <PackageReference Include="Newtonsoft.Json"/>
+        
     </ItemGroup>
 
     <ItemGroup>
@@ -26,12 +28,6 @@
 
     <ItemGroup>
         <ProjectReference Include="..\..\src\SegregatedStorage\SegregatedStorage.csproj"/>
-    </ItemGroup>
-
-    <ItemGroup>
-        <Reference Include="Newtonsoft.Json">
-            <HintPath>..\..\..\..\..\..\.nuget\packages\newtonsoft.json\13.0.4\lib\net6.0\Newtonsoft.Json.dll</HintPath>
-        </Reference>
     </ItemGroup>
 
 </Project>
