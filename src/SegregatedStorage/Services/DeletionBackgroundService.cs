@@ -43,7 +43,14 @@ internal class DeletionBackgroundService<TKey> : BackgroundService
 
 		if (deleted)
 		{
-			await repository.DeleteAsync(storedFile.Id, cancellationToken);
+			try
+			{
+				await repository.DeleteAsync(storedFile.Id, cancellationToken);
+			}
+			catch (FileNotFoundException)
+			{
+				// Empty by design, the file is already gone
+			}
 		}
 	}
 

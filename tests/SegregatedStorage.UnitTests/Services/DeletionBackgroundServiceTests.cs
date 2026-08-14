@@ -1,4 +1,5 @@
 using NSubstitute;
+using NSubstitute.ExceptionExtensions;
 using SegregatedStorage.Utilities;
 
 namespace SegregatedStorage.UnitTests.Services;
@@ -42,6 +43,34 @@ public class DeletionBackgroundServiceTests
 
 		// Assert
 		Assert.True(getForDeletionCalled);
+	}
+
+	[Fact]
+	public async Task DeleteFromRepositoriesAsync_Throws_DoesNothing()
+	{
+		// Arrange
+		var deleteCalled = false;
+		var file = StoredFile.Create(Guid.NewGuid(), "hello world", "plain/text");
+		var repository = Substitute.For<IFileRepository>();
+		var storageProvider = Substitute.For<IStorageProvider>();
+		repository.GetForDeletionAsync(Arg.Any<CancellationToken>()).Returns([file]);
+		repository.When(rep => rep.DeleteAsync(Arg.Any<Guid>(), Arg.Any<CancellationToken>())).Do(_ =>
+		{
+			deleteCalled = true;
+		});
+		repository.DeleteAsync(Arg.Any<Guid>(), Arg.Any<CancellationToken>()).ThrowsAsync<FileNotFoundException>();
+
+
+		var repositoryLocator = Substitute.For<IAsyncServiceLocator<int, IFileRepository>>();
+		repositoryLocator.GetServices().Returns([(42, repository)]);
+		var storageProviderLocator = Substitute.For<IAsyncServiceLocator<int, IStorageProvider>>();
+		storageProviderLocator.GetServiceAsync(Arg.Any<int>(), Arg.Any<CancellationToken>()).Returns(ValueTask.FromResult(storageProvider));
+		var service = new FakeDeletionBackgroundService(repositoryLocator, storageProviderLocator);
+
+		// Act && Assert
+		var ex = await Record.ExceptionAsync(async () => await service.InvokeDeleteFromRepositoriesAsync());
+		Assert.True(deleteCalled);
+		Assert.Null(ex);
 	}
 
 	[Fact]
