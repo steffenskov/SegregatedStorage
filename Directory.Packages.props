@@ -13,7 +13,7 @@
         <PackageVersion Include="Newtonsoft.Json" Version="13.0.4"/>
     </ItemGroup>
     <ItemGroup Label="Mongo">
-        <PackageVersion Include="MongoDB.Driver" Version="3.11.0"/>
+        <PackageVersion Include="MongoDB.Driver" Version="3.11.1"/>
     </ItemGroup>
     <ItemGroup Label="Azure">
         <PackageVersion Include="Azure.Storage.Blobs" Version="12.29.1"/>
