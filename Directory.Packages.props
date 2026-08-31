@@ -16,7 +16,7 @@
         <PackageVersion Include="MongoDB.Driver" Version="3.11.0"/>
     </ItemGroup>
     <ItemGroup Label="Azure">
-        <PackageVersion Include="Azure.Storage.Blobs" Version="12.29.1"/>
+        <PackageVersion Include="Azure.Storage.Blobs" Version="12.29.2"/>
     </ItemGroup>
     <ItemGroup Label="Main">
         <PackageVersion Include="Microsoft.AspNetCore.OpenApi" Version="10.0.11"/>
