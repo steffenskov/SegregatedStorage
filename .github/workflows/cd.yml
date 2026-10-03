@@ -13,7 +13,8 @@ env:
   AZURE_PROJECT_PATH: 'src/StorageProviders/SegregatedStorage.AzureStorageProvider/SegregatedStorage.AzureStorageProvider.csproj'
   COSMOS_PROJECT_PATH: 'src/FileRepositories/SegregatedStorage.CosmosFileRepository/SegregatedStorage.CosmosFileRepository.csproj'
   MONGO_PROJECT_PATH: 'src/FileRepositories/SegregatedStorage.MongoFileRepository/SegregatedStorage.MongoFileRepository.csproj'
-  SOLUTION_PATH: 'SegregatedStorage.sln'
+  ASPNET_PROJECT_PATH: 'src/SegregatedStorage.AspNetCore/SegregatedStorage.AspNetCore.csproj'
+  SOLUTION_PATH: 'SegregatedStorage.slnx'
   PACKAGE_OUTPUT_DIRECTORY: ${{ github.workspace }}/output
   NUGET_SOURCE_URL: 'https://api.nuget.org/v3/index.json'
 
@@ -24,12 +25,12 @@ jobs:
 
     steps:
     - name: 'Checkout'
-      uses: actions/checkout@v4
+      uses: actions/checkout@v6
 
     - name: 'Install dotnet'
-      uses: actions/setup-dotnet@v4
+      uses: actions/setup-dotnet@v5
       with:
-        dotnet-version: 9.0.x
+        dotnet-version: 10.0.x
 
     - name: 'Restore packages'
       run: dotnet restore ${{ env.SOLUTION_PATH }}
@@ -45,12 +46,12 @@ jobs:
 
     steps:
     - name: 'Checkout'
-      uses: actions/checkout@v4
+      uses: actions/checkout@v6
 
     - name: 'Install dotnet'
-      uses: actions/setup-dotnet@v4
+      uses: actions/setup-dotnet@v5
       with:
-        dotnet-version: 9.0.x
+        dotnet-version: 10.0.x
 
     - name: 'Restore packages'
       run: dotnet restore ${{ env.SOLUTION_PATH }}
@@ -69,6 +70,9 @@ jobs:
 
     - name: 'Pack Mongo extension'
       run: dotnet pack ${{ env.MONGO_PROJECT_PATH }} --no-restore --no-build --configuration Release --include-symbols -p:SymbolPackageFormat=snupkg --output ${{ env.PACKAGE_OUTPUT_DIRECTORY }}
+
+    - name: 'Pack AspNetCore extension'
+      run: dotnet pack ${{ env.ASPNET_PROJECT_PATH }} --no-restore --no-build --configuration Release --include-symbols -p:SymbolPackageFormat=snupkg --output ${{ env.PACKAGE_OUTPUT_DIRECTORY }}
 
     - name: NuGet login (OIDC)
       uses: NuGet/login@v1

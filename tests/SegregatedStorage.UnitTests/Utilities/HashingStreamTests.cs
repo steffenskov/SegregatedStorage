@@ -41,7 +41,7 @@ public class HashingStreamTests
 		await using var sut = new HashingStream(inner, HashAlgorithmName.MD5);
 
 		// Act
-		await sut.CopyToAsync(Stream.Null);
+		await sut.CopyToAsync(Stream.Null, TestContext.Current.CancellationToken);
 
 		// Assert
 		Assert.Equal(ComputeMd5(data), sut.GetHashAndReset());
@@ -53,11 +53,11 @@ public class HashingStreamTests
 		// Arrange
 		var data = "unit test payload"u8.ToArray();
 		using var inner = MakeStream(data);
-		using var sut = new HashingStream(inner, HashAlgorithmName.MD5);
+		await using var sut = new HashingStream(inner, HashAlgorithmName.MD5);
 
 		// Act
 		var buffer = new byte[4];
-		while (await sut.ReadAsync(buffer, 0, buffer.Length) > 0) { }
+		while (await sut.ReadAsync(buffer, 0, buffer.Length, TestContext.Current.CancellationToken) > 0) { }
 
 		// Assert
 		Assert.Equal(ComputeMd5(data), sut.GetHashAndReset());

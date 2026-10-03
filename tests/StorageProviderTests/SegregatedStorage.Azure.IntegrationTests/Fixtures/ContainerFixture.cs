@@ -17,7 +17,12 @@ public class ContainerFixture : IAsyncLifetime
 
 	public IServiceProvider Provider { get; private set; } = null!;
 
-	public async Task InitializeAsync()
+	public async ValueTask DisposeAsync()
+	{
+		await _azureContainer.DisposeAsync();
+	}
+
+	public async ValueTask InitializeAsync()
 	{
 		await _azureContainer.StartAsync();
 
@@ -25,10 +30,5 @@ public class ContainerFixture : IAsyncLifetime
 		services.AddAzureStorageProvider<int>(ConnectionString, customerId => $"container-{customerId}");
 		services.AddStorageService<int>();
 		Provider = services.BuildServiceProvider();
-	}
-
-	public async Task DisposeAsync()
-	{
-		await _azureContainer.DisposeAsync();
 	}
 }

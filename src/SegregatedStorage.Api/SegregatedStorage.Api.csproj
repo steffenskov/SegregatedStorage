@@ -2,14 +2,21 @@
 
     <PropertyGroup>
         <IsPackable>false</IsPackable>
+
+        <!-- The FrameworkReference to Microsoft.AspNetCore.App is intentional (flows from SegregatedStorage.AspNetCore); this SDK also adds it implicitly. -->
+        <NoWarn>$(NoWarn);NETSDK1086</NoWarn>
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Microsoft.AspNetCore.OpenApi"/>
+        <FrameworkReference Include="Microsoft.AspNetCore.App"/>
+    </ItemGroup>
+
+    <ItemGroup>
         <PackageReference Include="Swashbuckle.AspNetCore"/>
     </ItemGroup>
 
     <ItemGroup>
+        <ProjectReference Include="..\SegregatedStorage.AspNetCore\SegregatedStorage.AspNetCore.csproj"/>
         <ProjectReference Include="..\SegregatedStorage\SegregatedStorage.csproj"/>
     </ItemGroup>
 

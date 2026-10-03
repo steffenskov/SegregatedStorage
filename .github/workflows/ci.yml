@@ -7,7 +7,7 @@ on:
       - '!main'   # excludes main
 
 env:
-  SOLUTION_PATH: 'SegregatedStorage.sln'
+  SOLUTION_PATH: 'SegregatedStorage.slnx'
   PACKAGE_OUTPUT_DIRECTORY: ${{ github.workspace }}\output
   NUGET_SOURCE_URL: 'https://api.nuget.org/v3/index.json'
 
@@ -18,12 +18,12 @@ jobs:
 
     steps:
     - name: 'Checkout'
-      uses: actions/checkout@v4
+      uses: actions/checkout@v6
 
     - name: 'Install dotnet'
-      uses: actions/setup-dotnet@v4
+      uses: actions/setup-dotnet@v5
       with:
-        dotnet-version: 9.0.x
+        dotnet-version: 10.0.x
 
     - name: 'Restore packages'
       run: dotnet restore ${{ env.SOLUTION_PATH }}
