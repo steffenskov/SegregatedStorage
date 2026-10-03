@@ -2,7 +2,7 @@
 
     <PropertyGroup>
         <Description>Extension to SegregatedStorage adding support for MongoDB for storing metadata</Description>
-        <PackageProjectUrl>https://github.com/steffenskov/SegregatedStorage.MongoFileRepository</PackageProjectUrl>
+        <PackageProjectUrl>https://github.com/steffenskov/SegregatedStorage</PackageProjectUrl>
         <PackageTags>storage, segregation</PackageTags>
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <RootNamespace>SegregatedStorage</RootNamespace>

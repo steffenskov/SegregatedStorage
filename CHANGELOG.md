@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+## [2.0.0] - 2026-10-03
+
+### Changed
+
+- Split Asp.Net endpoint mapping into a separate project: [SegregatedStorage.AspNetCore](https://www.nuget.org/packages/SegregatedStorage.AspNetCore)~~~~
+
 ## [1.9.1] - 2026-08-13
 
 ### Fixed

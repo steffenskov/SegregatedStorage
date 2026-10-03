@@ -37,7 +37,7 @@ builder.Services.AddAzureStorageProvider<int>("connectionString", key => $"conta
 builder.Services.AddStorageService<int>();
 ```
 
-Secondly, if you want to utilize the built-in API endpoints, add those to your app:
+Secondly, if you want to utilize the built-in API endpoints, add the [SegregatedStorage.AspNetCore](https://www.nuget.org/packages/SegregatedStorage.AspNetCore) package to your project as well as these lines:
 
 ```
 var app = builder.Build();

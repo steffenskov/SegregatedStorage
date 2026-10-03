@@ -7,19 +7,11 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="coverlet.collector">
-            <PrivateAssets>all</PrivateAssets>
-            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-        </PackageReference>
         <PackageReference Include="Microsoft.NET.Test.Sdk"/>
         <PackageReference Include="NSubstitute"/>
-        <PackageReference Include="xunit"/>
-        <PackageReference Include="xunit.runner.visualstudio">
-            <PrivateAssets>all</PrivateAssets>
-            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-        </PackageReference>
+        <PackageReference Include="xunit.v3"/>
+        <PackageReference Include="Microsoft.Testing.Extensions.CodeCoverage"/>
         <PackageReference Include="Newtonsoft.Json"/>
-        
     </ItemGroup>
 
     <ItemGroup>
@@ -27,6 +19,7 @@
     </ItemGroup>
 
     <ItemGroup>
+        <ProjectReference Include="..\..\src\SegregatedStorage.AspNetCore\SegregatedStorage.AspNetCore.csproj"/>
         <ProjectReference Include="..\..\src\SegregatedStorage\SegregatedStorage.csproj"/>
     </ItemGroup>
 

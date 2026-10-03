@@ -1,0 +1,32 @@
+<Solution>
+  <Folder Name="/Solution Items/">
+    <File Path=".editorconfig" />
+    <File Path="CHANGELOG.md" />
+    <File Path="Directory.Build.props" />
+    <File Path="Directory.Packages.props" />
+  </Folder>
+  <Folder Name="/src/">
+    <Project Path="src/SegregatedStorage.Api/SegregatedStorage.Api.csproj" />
+    <Project Path="src/SegregatedStorage.AspNetCore/SegregatedStorage.AspNetCore.csproj" />
+    <Project Path="src/SegregatedStorage/SegregatedStorage.csproj" />
+  </Folder>
+  <Folder Name="/src/FileRepositories/">
+    <Project Path="src/FileRepositories/SegregatedStorage.CosmosFileRepository/SegregatedStorage.CosmosFileRepository.csproj" />
+    <Project Path="src/FileRepositories/SegregatedStorage.MongoFileRepository/SegregatedStorage.MongoFileRepository.csproj" />
+  </Folder>
+  <Folder Name="/src/StorageProviders/">
+    <Project Path="src/StorageProviders/SegregatedStorage.AzureStorageProvider/SegregatedStorage.AzureStorageProvider.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/SegregatedStorage.UnitTests/SegregatedStorage.UnitTests.csproj" />
+  </Folder>
+  <Folder Name="/tests/FileRepositoryTests/">
+    <Project Path="tests/FileRepositoryTests/SegregatedStorage.Cosmos.IntegrationTests/SegregatedStorage.Cosmos.IntegrationTests.csproj" />
+    <Project Path="tests/FileRepositoryTests/SegregatedStorage.FileRepository.IntegrationTests/SegregatedStorage.FileRepository.IntegrationTests.csproj" />
+    <Project Path="tests/FileRepositoryTests/SegregatedStorage.Mongo.IntegrationTests/SegregatedStorage.Mongo.IntegrationTests.csproj" />
+  </Folder>
+  <Folder Name="/tests/StorageProviderTests/">
+    <Project Path="tests/StorageProviderTests/SegregatedStorage.Azure.IntegrationTests/SegregatedStorage.Azure.IntegrationTests.csproj" />
+    <Project Path="tests/StorageProviderTests/SegregatedStorage.StorageProvider.IntegrationTests/SegregatedStorage.StorageProvider.IntegrationTests.csproj" />
+  </Folder>
+</Solution>

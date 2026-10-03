@@ -2,20 +2,15 @@
 
     <PropertyGroup>
         <IsPackable>false</IsPackable>
-        <IsTestProject>true</IsTestProject>
+        <IsTestProject>false</IsTestProject>
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="coverlet.collector">
-            <PrivateAssets>all</PrivateAssets>
-            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-        </PackageReference>
+
         <PackageReference Include="Microsoft.NET.Test.Sdk"/>
-        <PackageReference Include="xunit"/>
-        <PackageReference Include="xunit.runner.visualstudio">
-            <PrivateAssets>all</PrivateAssets>
-            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-        </PackageReference>
+        <PackageReference Include="xunit.v3.extensibility.core"/>
+        <PackageReference Include="xunit.v3.assert"/>
+        <PackageReference Include="Microsoft.Testing.Extensions.CodeCoverage"/>
     </ItemGroup>
 
     <ItemGroup>
@@ -25,5 +20,6 @@
     <ItemGroup>
         <ProjectReference Include="..\..\..\src\SegregatedStorage\SegregatedStorage.csproj"/>
     </ItemGroup>
+
 
 </Project>

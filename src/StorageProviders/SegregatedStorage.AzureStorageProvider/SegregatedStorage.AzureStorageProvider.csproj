@@ -2,7 +2,7 @@
 
     <PropertyGroup>
         <Description>Extension to SegregatedStorage adding support for Azure Blob storage</Description>
-        <PackageProjectUrl>https://github.com/steffenskov/SegregatedStorage.AzureStorageProvider</PackageProjectUrl>
+        <PackageProjectUrl>https://github.com/steffenskov/SegregatedStorage</PackageProjectUrl>
         <PackageTags>storage, segregation</PackageTags>
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <RootNamespace>SegregatedStorage</RootNamespace>

@@ -19,7 +19,7 @@ public class ContainerFixture : IAsyncLifetime
 
 	public string ConnectionString => _mongoContainer.GetConnectionString();
 
-	public async Task InitializeAsync()
+	public async ValueTask InitializeAsync()
 	{
 		await _mongoContainer.StartAsync();
 
@@ -28,7 +28,7 @@ public class ContainerFixture : IAsyncLifetime
 		Provider = services.BuildServiceProvider();
 	}
 
-	public async Task DisposeAsync()
+	public async ValueTask DisposeAsync()
 	{
 		await _mongoContainer.DisposeAsync();
 	}

@@ -2,7 +2,7 @@
 
     <PropertyGroup>
         <Description>Extension to SegregatedStorage adding support for CosmosDB for storing metadata</Description>
-        <PackageProjectUrl>https://github.com/steffenskov/SegregatedStorage.CosmosFileRepository</PackageProjectUrl>
+        <PackageProjectUrl>https://github.com/steffenskov/SegregatedStorage</PackageProjectUrl>
         <PackageTags>storage, segregation</PackageTags>
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <RootNamespace>SegregatedStorage</RootNamespace>
