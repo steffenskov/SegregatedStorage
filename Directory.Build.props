@@ -12,7 +12,6 @@
         <Copyright>Steffen Skov 2024</Copyright>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
 
-        <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles> <!-- Necessary for code coverage due to System.Text.RegularExpression doing source gen -->
     </PropertyGroup>
 </Project>
 
